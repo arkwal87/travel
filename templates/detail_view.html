@@ -1,15 +1,42 @@
 {% extends "index.html" %}
 {% block content %}
-    <div class="container">
-    {{ info }}
-    <form method="post">
-    {% csrf_token %}
-        <table>
-            {{ form.as_table }}
-        </table>
-        <input type="submit" value="Dodaj">
-    </form>
-</div>
-{#    {% include "object_list.html" %}#}
+<table class="table table-striped">
+<thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Imię</th>
+        <th scope="col">Nazwisko</th>
+        <th scope="col">Data urodzenia</th>
+        <th scope="col">Telefon</th>
+        <th scope="col">e-mail</th>
+        <th scope="col">Operacje</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <th scope="row">{{ object.id }}</th>
+        <td>
+            {{ object.first_name }}
+        </td>
+        <td>
+            {{ object.last_name }}
+        </td>
+        <td>
+            {{ object.date_of_birth|date:"Y-m-d" }}
+        </td>
+        <td>
+            {{ object.phone_number }}
+        </td>
+        <td>
+            {{ object.email }}
+        </td>
+        <td>
+            <a href="klienci/{{ object.id }}/usun/" class="btn btn-info active" role="button" aria-pressed="true">Usuń</a>
+            <span class=></span>
+        </td>
+    </tr>
+</tbody>
+</table>
+<a href="{% url 'client_create' %}" class="btn btn-info active" role="button" aria-pressed="true">Dodaj klienta</a>
 
 {% endblock %}

@@ -9,14 +9,18 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Simple Sidebar - Start Bootstrap Template</title>
+  <title>InTravel Management Center</title>
 
   <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+{#    <meta name="viewport" content="width=device-width, initial-scale=1">#}
+{#    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">#}
+{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">#}
 
 
   <!-- Custom styles for this template -->
-  <link href="{% static "css/simple-sidebar.css" %}" rel="stylesheet">
+    <link href="{% static "css/simple-sidebar.css" %}" rel="stylesheet">
+
 
 </head>
 
@@ -28,7 +32,7 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="sidebar-heading">InStyle Travel </div>
       <div class="list-group list-group-flush">
-        <a class="list-group-item list-group-item-action bg-light" href="{% url 'list_client' %}">Klienci</a>
+        <a class="list-group-item list-group-item-action bg-light" href="{% url 'client_list' %}">Klienci</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Hotele</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Pokoje</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Płatności</a>

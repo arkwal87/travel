@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+{% block content %}
+    <div class="container">
+    {{ info }}
+    <form method="post">
+    {% csrf_token %}
+        <p>Czy na pewno chcesz usunąć {{ object.last_name }}</p>
+{#        <input type="submit" value="Tak">#}
+        <button type="submit" class="btn btn-info active">Tak</button>
+        <a href="{% url 'client_list' %}" class="btn btn-info active" role="button" aria-pressed="true">Nie</a>
+    </form>
+</div>
+{#    {% include "object_list.html" %}#}
+
+{% endblock %}

@@ -32,6 +32,12 @@ class Client(models.Model):
     phone_number = models.CharField(max_length=9, null=True)
     email = models.EmailField(null=True)
 
+    def get_detail_url(self):
+        return f"/reservation/klienci/{self.pk}"
+
+    def get_update_url(self):
+        return f"/reservation/klienci/{self.pk}/edytuj"
+
 
 class Hotel(models.Model):
     name = models.CharField(max_length=32)

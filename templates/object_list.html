@@ -9,6 +9,7 @@
         <th scope="col">Data urodzenia</th>
         <th scope="col">Telefon</th>
         <th scope="col">e-mail</th>
+        <th scope="col">Operacje</th>
     </tr>
 </thead>
 <tbody>
@@ -30,10 +31,18 @@
         <td>
             {{ obj.email }}
         </td>
+        <td>
+            <a href="/reservation/klienci/{{ obj.id }}/usun" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">usuń
+            </a>
+            <a href="{{obj.get_update_url}}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">edytuj
+            </a>
+            <a href="{{obj.get_detail_url}}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">szczegóły
+            </a>
+        </td>
     </tr>
 {% endfor %}
 </tbody>
 </table>
-<a href="{% url 'create_client' %}" class="btn btn-info active" role="button" aria-pressed="true">Dodaj klienta</a>
+<a href="{% url 'client_create' %}" class="btn btn-info active" role="button" aria-pressed="true">Dodaj nowego klienta</a>
 
 {% endblock %}

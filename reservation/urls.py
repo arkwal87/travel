@@ -3,8 +3,10 @@ from django.urls import path
 from reservation import views
 
 urlpatterns = [
-    path("klienci/dodaj", views.ClientCreateView.as_view(), name="create_client"),
-    path("klienci/usun/<int:id>", views.ClientDeleteView.as_view(), name="delete_client"),
-    path("klienci/", views.ClientListView.as_view(), name="list_client")
+    path("klienci/", views.ClientListView.as_view(), name="client_list"),
+    path("klienci/dodaj", views.ClientCreateView.as_view(), name="client_create"),
+    path("klienci/<int:id>", views.ClientDetailView.as_view(), name="client_details"),
+    path("klienci/<int:id>/edytuj/", views.ClientUpdateView.as_view(), name="client_update"),
+    path("klienci/<int:id>/usun/", views.ClientDeleteView.as_view(), name="client_delete"),
 
 ]
