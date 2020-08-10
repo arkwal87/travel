@@ -1,0 +1,39 @@
+{% extends "index.html" %}
+{% block content %}
+<table class="table table-striped">
+<thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Imię</th>
+        <th scope="col">Nazwisko</th>
+        <th scope="col">Data urodzenia</th>
+        <th scope="col">Telefon</th>
+        <th scope="col">e-mail</th>
+    </tr>
+</thead>
+<tbody>
+{% for obj in objects %}
+    <tr>
+        <th scope="row">{{ obj.id }}</th>
+        <td>
+            {{ obj.first_name }}
+        </td>
+        <td>
+            {{ obj.last_name }}
+        </td>
+        <td>
+            {{ obj.date_of_birth|date:"Y-m-d" }}
+        </td>
+        <td>
+            {{ obj.phone_number }}
+        </td>
+        <td>
+            {{ obj.email }}
+        </td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+<a href="{% url 'create_client' %}" class="btn btn-info active" role="button" aria-pressed="true">Dodaj klienta</a>
+
+{% endblock %}
