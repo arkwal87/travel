@@ -3,13 +3,9 @@
 <table class="table table-striped">
 <thead>
     <tr>
-        <th scope="col">#</th>
-        <th scope="col">Imię</th>
-        <th scope="col">Nazwisko</th>
-        <th scope="col">Data urodzenia</th>
-        <th scope="col">Telefon</th>
-        <th scope="col">e-mail</th>
-        <th scope="col">Operacje</th>
+        {% for column in columns %}
+        <th scope="col">{{ column }}</th>
+        {% endfor %}
     </tr>
 </thead>
 <tbody>
@@ -17,18 +13,23 @@
         <th scope="row">{{ object.id }}</th>
         <td>
             {{ object.first_name }}
+            {{ object.name }}
         </td>
         <td>
             {{ object.last_name }}
+            {{ object.continent }}
         </td>
         <td>
             {{ object.date_of_birth|date:"Y-m-d" }}
+            {{ object.country }}
         </td>
         <td>
             {{ object.phone_number }}
+            {{ object.region }}
         </td>
         <td>
             {{ object.email }}
+            <a href="{{ object.link }}">{{ object.link }}</a>
         </td>
         <td>
             <a href="klienci/{{ object.id }}/usun/" class="btn btn-info active" role="button" aria-pressed="true">Usuń</a>

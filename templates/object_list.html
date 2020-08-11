@@ -3,46 +3,46 @@
 <table class="table table-striped">
 <thead>
     <tr>
-        <th scope="col">#</th>
-        <th scope="col">Imię</th>
-        <th scope="col">Nazwisko</th>
-        <th scope="col">Data urodzenia</th>
-        <th scope="col">Telefon</th>
-        <th scope="col">e-mail</th>
-        <th scope="col">Operacje</th>
+        {% for column in columns %}
+        <th scope="col">{{ column }}</th>
+        {% endfor %}
     </tr>
 </thead>
 <tbody>
-{% for obj in objects %}
+{% for object in objects %}
     <tr>
-        <th scope="row">{{ obj.id }}</th>
+        <th scope="row">{{ object.id }}</th>
         <td>
-            {{ obj.first_name }}
+            {{ object.first_name }}
+            {{ object.name }}
         </td>
         <td>
-            {{ obj.last_name }}
+            {{ object.last_name }}
+            {{ object.continent }}
         </td>
         <td>
-            {{ obj.date_of_birth|date:"Y-m-d" }}
+            {{ object.date_of_birth|date:"Y-m-d" }}
+            {{ object.country }}
         </td>
         <td>
-            {{ obj.phone_number }}
+            {{ object.phone_number }}
+            {{ object.region }}
         </td>
         <td>
-            {{ obj.email }}
+            {{ object.email }}
         </td>
         <td>
-            <a href="/reservation/klienci/{{ obj.id }}/usun" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">usuń
+            <a href="{{ object.get_delete_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">usuń
             </a>
-            <a href="{{obj.get_update_url}}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">edytuj
+            <a href="{{object.get_update_url}}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">edytuj
             </a>
-            <a href="{{obj.get_detail_url}}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">szczegóły
+            <a href="{{object.get_detail_url}}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">szczegóły
             </a>
         </td>
     </tr>
 {% endfor %}
 </tbody>
 </table>
-<a href="{% url 'client_create' %}" class="btn btn-info active" role="button" aria-pressed="true">Dodaj nowego klienta</a>
+<a href="dodaj" class="btn btn-info active" role="button" aria-pressed="true">Dodaj</a>
 
 {% endblock %}
