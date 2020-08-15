@@ -1,0 +1,117 @@
+{% extends "index.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col-2">
+            Hotel:
+        </div>
+        <div class="col-10">
+            <a href="/reservation/hotele/{{ object.room.hotel.id }}">{{ object.room.hotel }}</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            Pokój:
+        </div>
+        <div class="col-10">
+            <a href="/reservation/pokoje/{{ object.room.id }}">{{ object.room }}</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            Cena:
+        </div>
+        <div class="col-10">
+            {{ object.price }} {{ object.currency.hash }} ({{ object.currency_conversion }} PLN)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            Cena za serwis:
+        </div>
+        <div class="col-10">
+            {{ object.price_service }} PLN
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            Data rezerwacji:
+        </div>
+        <div class="col-10">
+            {{ object.date_of_reservation|date:"Y-m-d" }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            Data wylotu:
+        </div>
+        <div class="col-10">
+            {{ object.date_from|date:"Y-m-d" }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            Data wylotu:
+        </div>
+        <div class="col-10">
+            {{ object.date_to|date:"Y-m-d" }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            Klient:
+        </div>
+        <div class="col-10">
+            {% for client in my_clients_list %}
+                <a href="/reservation/klienci/{{ client.id }}">{{ client }}</a><br>
+            {% endfor %}
+        </div>
+    </div>
+
+<table class="table table-striped">
+<thead>
+    <tr>
+        {% for column in columns %}
+        <th scope="col">{{ column }}</th>
+        {% endfor %}
+    </tr>
+</thead>
+<tbody>
+
+    <tr>
+        <th scope="row">{{ object.id }}</th>
+        <td>
+            {{ object.room }}
+        </td>
+        <td>
+            {{ object.price }}
+        </td>
+        <td>
+            {{ object.currency.hash }}
+        </td>
+        <td>
+            {{ object.price_service }}
+        </td>
+        <td>
+            {{ object.date_of_reservation }}
+        </td>
+        <td>
+            {{ object.date_from }}
+        </td>
+        <td>
+            {{ object.date_to }}
+        </td>
+        <td>
+            {% for client in my_clients_list %}
+               {{ client }} <br>
+            {% endfor %}
+        </td>
+        <td>
+            <a href="{{ object.get_delete_url}}" class="btn btn-info active" role="button" aria-pressed="true">Usuń</a>
+            <span class=></span>
+        </td>
+    </tr>
+</tbody>
+</table>
+{#<a href="dodaj" class="btn btn-info active" role="button" aria-pressed="true">Dodaj klienta</a>#}
+
+{% endblock %}

@@ -15,21 +15,27 @@
         <td>
             {{ object.first_name }}
             {{ object.name }}
+            {{ object.room }}
         </td>
         <td>
             {{ object.last_name }}
             {{ object.continent }}
+            {{ object.price }}
         </td>
         <td>
             {{ object.date_of_birth|date:"Y-m-d" }}
             {{ object.country }}
+            {{ object.currency.hash }}
         </td>
         <td>
             {{ object.phone_number }}
             {{ object.region }}
+            {{ object.hotel }}
+            {{ object.price_service }}
         </td>
         <td>
             {{ object.email }}
+            {{ object.date_of_reservation|date:"Y-m-d" }}
         </td>
         <td>
             <a href="{{ object.get_delete_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">usuń

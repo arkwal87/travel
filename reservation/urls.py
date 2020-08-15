@@ -15,4 +15,16 @@ urlpatterns = [
     path("hotele/<int:id>/edytuj", views.HotelUpdateView.as_view(), name="hotel_update"),
     path("hotele/<int:id>/usun", views.HotelDeleteView.as_view(), name="hotel_delete"),
 
+    path("pokoje/", views.RoomListView.as_view(), name="room_list"),
+    path("pokoje/dodaj", views.RoomCreateView.as_view(), name="room_create"),
+    path("pokoje/<int:id>", views.RoomDetailView.as_view(), name="room_details"),
+    path("pokoje/<int:id>/edytuj", views.RoomUpdateView.as_view(), name="room_update"),
+    path("pokoje/<int:id>/usun", views.RoomDeleteView.as_view(), name="room_delete"),
+
+    path("", views.ReservationListView.as_view(), name="reservation_list"),
+    path("dodaj", views.ReservationCreateView.as_view(), name="reservation_create"),
+    path("<int:id>", views.ReservationDetailView.as_view(), name="reservation_details"),
+    path("<int:id>/edytuj", views.ReservationUpdateView.as_view(), name="reservation_update"),
+    path("<int:id>/usun", views.ReservationDeleteView.as_view(), name="reservation_delete"),
+
 ]

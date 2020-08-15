@@ -1,9 +1,13 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from reservation.models import Hotel
+from reservation.models import Room, Reservation
 
 
-class HotelCreateForm(forms.ModelForm):
+class ReservationCreateForm(forms.ModelForm):
     class Meta:
-        model = Hotel
+        model = Reservation
+        fields = "__all__"
+        widgets = {
+            "client": forms.SelectMultiple
+        }

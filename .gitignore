@@ -44,6 +44,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+/doc_patterns
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -145,5 +146,7 @@ dmypy.json
 
 # pytype static type analyzer
 .pytype/
+
+__temp.py
 
 # End of https://www.toptal.com/developers/gitignore/api/django
