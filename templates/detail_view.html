@@ -51,7 +51,7 @@
         </td>
         <td>
             {% for client in my_client_list %}
-               {{ client }} <br>
+               {{ client.name }} <br>
             {% endfor %}
         </td>
         <td>
@@ -61,6 +61,13 @@
     </tr>
 </tbody>
 </table>
+    <div>
+<ul>
+    {% for room in object.room_set.all %}
+        <li>    {{ room.name }}  <br></li>
+    {% endfor %}
+</ul>
+</div>
 {#<a href="dodaj" class="btn btn-info active" role="button" aria-pressed="true">Dodaj klienta</a>#}
 
 {% endblock %}

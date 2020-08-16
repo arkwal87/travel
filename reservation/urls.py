@@ -27,4 +27,6 @@ urlpatterns = [
     path("<int:id>/edytuj", views.ReservationUpdateView.as_view(), name="reservation_update"),
     path("<int:id>/usun", views.ReservationDeleteView.as_view(), name="reservation_delete"),
 
+    path("pokoj/", views.RoomReservationCreateView.as_view(), name="room_res_create"),
+
 ]

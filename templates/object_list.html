@@ -15,7 +15,9 @@
         <td>
             {{ object.first_name }}
             {{ object.name }}
-            {{ object.room }}
+            {% for room in object.room.all %}
+                {{ room.name }}
+            {% endfor %}
         </td>
         <td>
             {{ object.last_name }}

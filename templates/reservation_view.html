@@ -21,7 +21,10 @@
             Cena:
         </div>
         <div class="col-10">
-            {{ object.price }} {{ object.currency.hash }} ({{ object.currency_conversion }} PLN)
+            {% if object.price != 0 %}
+                {{ object.price }}
+{#                {{ object.currency.hash }} ({{ object.currency_conversion }} PLN)#}
+            {% endif %}
         </div>
     </div>
     <div class="row">
@@ -42,7 +45,7 @@
     </div>
     <div class="row">
         <div class="col-2">
-            Data wylotu:
+            Data powrotu:
         </div>
         <div class="col-10">
             {{ object.date_from|date:"Y-m-d" }}
@@ -61,7 +64,7 @@
             Klient:
         </div>
         <div class="col-10">
-            {% for client in my_clients_list %}
+            {% for client in object.client.all %}
                 <a href="/reservation/klienci/{{ client.id }}">{{ client }}</a><br>
             {% endfor %}
         </div>
@@ -76,11 +79,9 @@
     </tr>
 </thead>
 <tbody>
-
     <tr>
         <th scope="row">{{ object.id }}</th>
         <td>
-            {{ object.room }}
         </td>
         <td>
             {{ object.price }}
@@ -101,17 +102,52 @@
             {{ object.date_to }}
         </td>
         <td>
-            {% for client in my_clients_list %}
-               {{ client }} <br>
+{#        DLACZEGO BEZ _SET ?!?!?!??!?!#}
+            {% for client in object.client.all %}
+               {{ client.first_name }} {{ client.last_name }}<br>
             {% endfor %}
         </td>
         <td>
             <a href="{{ object.get_delete_url}}" class="btn btn-info active" role="button" aria-pressed="true">Usuń</a>
-            <span class=></span>
+            <a href="{{ object.get_delete_url}}" class="btn btn-info active" role="button" aria-pressed="true">Twórz umowę</a>
         </td>
     </tr>
 </tbody>
 </table>
-{#<a href="dodaj" class="btn btn-info active" role="button" aria-pressed="true">Dodaj klienta</a>#}
+<table class="table table-striped">
+<thead>
+    <tr>
+        {% for column in columns2 %}
+        <th scope="col">{{ column }}</th>
+        {% endfor %}
+    </tr>
+</thead>
+<tbody>
+    {% for room in object.roomreservation_set.all %}
+    <tr>
+        <th scope="row">{{ room.id }}</th>
+        <td>
+            {{ room.room }}
+        </td>
+        <td>
+            {{ room.room.hotel }}
+        </td>
+        <td>
+            {{ room.price }}
+        </td>
+        <td>
+            {{ room.currency.hash }}
+        </td>
+        <td>
+            {{ room.date_from }}
+        </td>
+        <td>
+            {{ room.date_to }}
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<a href="/reservation/pokoj/" class="btn btn-info active" role="button" aria-pressed="true">Dodaj pokój</a>
 
 {% endblock %}

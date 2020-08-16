@@ -38,15 +38,9 @@ class Currency(models.Model):
         return self.name
 
 
-# ======================================================================================================================
-
-#
-# class ClientReservation(models.Model):
-#     client = models.ForeignKey("Client", on_delete=models.CASCADE)
-#     reservation = models.ForeignKey("Reservation", on_delete=models.CASCADE)
-
-
-# =======================================================================================================================
+class Payment(models.Model):
+    reservation_no = models.ForeignKey("Reservation", on_delete=models.SET_NULL, null=True)
+    paid = models.BooleanField(default=False)
 
 
 class Client(models.Model):
@@ -97,6 +91,8 @@ class Room(models.Model):
     price = models.FloatField()
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     hotel = models.ForeignKey(Hotel, on_delete=models.SET_NULL, null=True)
+    room_size = models.IntegerField(null=True)
+    terrace_size = models.IntegerField(null=True)
 
     def __str__(self):
         return self.name
@@ -111,19 +107,22 @@ class Room(models.Model):
         return f"/reservation/pokoje/{self.pk}/usun"
 
 
-class Payment(models.Model):
-    reservation_no = models.ForeignKey("Reservation", on_delete=models.SET_NULL, null=True)
-    paid = models.BooleanField(default=False)
+class RoomReservation(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.SET("usunięty"))
+    date_from = models.DateField()
+    date_to = models.DateField()
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
+    reservation = models.ForeignKey("Reservation", on_delete=models.SET("Usuniety"))
 
 
 class Reservation(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
-    price = models.DecimalField(decimal_places=2, max_digits=10)
+    price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
-    price_service = models.DecimalField(decimal_places=2, max_digits=10)
+    price_service = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     date_of_reservation = models.DateField(auto_now_add=True, blank=True)
-    date_from = models.DateField()
-    date_to = models.DateField()
+    date_from = models.DateField(null=True)
+    date_to = models.DateField(null=True)
     client = models.ManyToManyField(Client)
 
     def __str__(self):
@@ -131,7 +130,7 @@ class Reservation(models.Model):
 
     @property
     def currency_conversion(self):
-        return round(self.price * self.currency.rate,2)
+        return round(self.price * self.currency.rate, 2)
 
     def get_detail_url(self):
         return f"/reservation/{self.pk}"
@@ -141,4 +140,3 @@ class Reservation(models.Model):
 
     def get_delete_url(self):
         return f"/reservation/{self.pk}/usun"
-

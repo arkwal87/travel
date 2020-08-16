@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, View, DeleteView, UpdateView
-from reservation.models import Client, Hotel, Room, Reservation
+from reservation.models import Client, Hotel, Room, Reservation, RoomReservation
 from reservation.forms import ReservationCreateForm
 
 
@@ -21,11 +21,6 @@ class ClientCreateView(CreateView):
     fields = "__all__"
     success_url = reverse_lazy("client_list")
     template_name = "create_view.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({"info": "This is view for creating a new client"})
-        return context
 
 
 class ClientDetailView(DetailView):
@@ -80,11 +75,6 @@ class HotelCreateView(CreateView):
     success_url = reverse_lazy("hotel_list")
     template_name = "create_view.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({"info": "This is view for creating a new hotel"})
-        return context
-
 
 class HotelDetailView(DetailView):
     model = Hotel
@@ -137,11 +127,6 @@ class RoomCreateView(CreateView):
     template_name = "create_view.html"
     success_url = reverse_lazy("room_list")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({"info": "This is view for creating a new room"})
-        return context
-
 
 class RoomDetailView(DetailView):
     model = Room
@@ -191,14 +176,9 @@ class ReservationListView(View):
 
 class ReservationCreateView(CreateView):
     model = Reservation
-    fields = "__all__"
+    fields = ("price_service", "client")
     template_name = "create_view.html"
     success_url = reverse_lazy("reservation_list")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({"info": "This is view for creating a new room"})
-        return context
 
 
 class ReservationDetailView(DetailView):
@@ -206,6 +186,7 @@ class ReservationDetailView(DetailView):
     template_name = "reservation_view.html"
     columns = ["#", "Pokoj", "Cena", "Waluta", "Serwis",
                "Data rezerwacji", "Data wylotu", "Data powrotu", "Klient"]
+    columns2 = ["#", "Pokoj", "Hotel", "Cena", "Waluta", "Data wylotu", "Data powrotu"]
 
     def get_object(self, **kwargs):
         id_ = self.kwargs.get("id")
@@ -213,8 +194,7 @@ class ReservationDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        my_clients_list = Reservation.objects.get(id=self.kwargs.get("id")).client.all()
-        context.update({"columns": self.columns, "my_clients_list": my_clients_list})
+        context.update({"columns": self.columns, "columns2": self.columns2})
         return context
 
 
@@ -237,3 +217,25 @@ class ReservationDeleteView(DeleteView):
     def get_object(self, **kwargs):
         id_ = self.kwargs.get("id")
         return get_object_or_404(Reservation, id=id_)
+
+
+#
+# class NewReservation(View):
+#     def get(self, request):
+#         return render(request, "new_reservation_view.html", {"hotels_list": Hotel.objects.all()})
+#
+#
+#     def post(self, request):
+#         print(Room.objects.filter(hotel=Hotel.objects.get(name=request.POST["hotels"])))
+#         form = ReservationCreateForm
+#         return render(request, f"new_create.html", {"form":form})
+
+# ==================================== ROOM RESERVATION VIEWS ==========================================================
+
+class RoomReservationCreateView(CreateView):
+
+    model = RoomReservation
+    fields = "__all__"
+    template_name = "create_view.html"
+    success_url = reverse_lazy("reservation_list")
+
