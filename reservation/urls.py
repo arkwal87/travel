@@ -26,7 +26,9 @@ urlpatterns = [
     path("<int:id>", views.ReservationDetailView.as_view(), name="reservation_details"),
     path("<int:id>/edytuj", views.ReservationUpdateView.as_view(), name="reservation_update"),
     path("<int:id>/usun", views.ReservationDeleteView.as_view(), name="reservation_delete"),
-
-    path("pokoj/", views.RoomReservationCreateView.as_view(), name="room_res_create"),
+    path("<int:id>/umowa", views.CreateContractView.as_view(), name="create_contract"),
+    
+    path("<int:id>/dodaj_pokoj", views.RoomReservationCreateView.as_view(), name="room_res_create"),
+    path("usun_rez_pokoju/<int:id>/", views.RoomReservationDeleteView.as_view(), name="room_res_delete"),
 
 ]

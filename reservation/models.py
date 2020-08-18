@@ -1,7 +1,8 @@
 from django.db import models
 
-
 # Create your models here.
+from django.db.models import Sum
+
 
 class Continent(models.Model):
     name = models.CharField(max_length=32)
@@ -49,6 +50,9 @@ class Client(models.Model):
     date_of_birth = models.DateField()
     phone_number = models.CharField(max_length=9, null=True)
     email = models.EmailField(null=True)
+    city = models.CharField(max_length=32, null=True)
+    postcode = models.CharField(max_length=6, null=True)
+    address = models.TextField(null=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -108,29 +112,33 @@ class Room(models.Model):
 
 
 class RoomReservation(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.SET("usunięty"))
+    room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
     date_from = models.DateField()
     date_to = models.DateField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
-    reservation = models.ForeignKey("Reservation", on_delete=models.SET("Usuniety"))
+    reservation = models.ForeignKey("Reservation", on_delete=models.CASCADE)
+
+    def get_delete_url(self):
+        return f"/reservation/usun_rez_pokoju/{self.pk}/"
 
 
 class Reservation(models.Model):
-    price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     price_service = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     date_of_reservation = models.DateField(auto_now_add=True, blank=True)
-    date_from = models.DateField(null=True)
-    date_to = models.DateField(null=True)
-    client = models.ManyToManyField(Client)
+    client = models.ManyToManyField(Client, related_name="reservation_set")
+    owner = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="reservation_owner", null=True)
 
     def __str__(self):
         return f"Numer {self.pk}"
 
     @property
-    def currency_conversion(self):
-        return round(self.price * self.currency.rate, 2)
+    def get_data(self):
+        if RoomReservation.objects.filter(reservation=self).exists():
+            date_from = RoomReservation.objects.filter(reservation=self).order_by("date_from").first().date_from
+            date_to = RoomReservation.objects.filter(reservation=self).order_by("date_to").last().date_to
+            total_sum = RoomReservation.objects.filter(reservation=self).aggregate(Sum('price'))["price__sum"]
+            return [date_from, date_to, total_sum]
 
     def get_detail_url(self):
         return f"/reservation/{self.pk}"

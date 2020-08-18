@@ -1,10 +1,12 @@
+import openpyxl
+from django.db.models import Sum
 from django.shortcuts import render, get_object_or_404, redirect
 
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, View, DeleteView, UpdateView
 from reservation.models import Client, Hotel, Room, Reservation, RoomReservation
-from reservation.forms import ReservationCreateForm
+from reservation.forms import ReservationCreateForm, RoomReservationCreateForm
 
 
 # ================================== CLIENTS VIEWS =====================================================================
@@ -169,14 +171,13 @@ class RoomDeleteView(DeleteView):
 class ReservationListView(View):
     def get(self, request):
         columns = ["#", "Pokoj", "Cena", "Waluta", "Serwis",
-                   "Data rezerwacji"]  # , "Data wylotu", "Data powrotu", "Klient"]
+                   "Data rezerwacji"]
         reservation_list = Reservation.objects.all().order_by('pk')
         return render(request, "object_list.html", context={"objects": reservation_list, "columns": columns})
 
 
 class ReservationCreateView(CreateView):
-    model = Reservation
-    fields = ("price_service", "client")
+    form_class = ReservationCreateForm
     template_name = "create_view.html"
     success_url = reverse_lazy("reservation_list")
 
@@ -185,8 +186,8 @@ class ReservationDetailView(DetailView):
     model = Reservation
     template_name = "reservation_view.html"
     columns = ["#", "Pokoj", "Cena", "Waluta", "Serwis",
-               "Data rezerwacji", "Data wylotu", "Data powrotu", "Klient"]
-    columns2 = ["#", "Pokoj", "Hotel", "Cena", "Waluta", "Data wylotu", "Data powrotu"]
+               "Data rezerwacji", "Data wyjazdu", "Data powrotu", "Klient"]
+    columns2 = ["#", "Pokoj", "Hotel", "Cena", "Waluta", "Data wyjazdu", "Data powrotu"]
 
     def get_object(self, **kwargs):
         id_ = self.kwargs.get("id")
@@ -200,7 +201,7 @@ class ReservationDetailView(DetailView):
 
 class ReservationUpdateView(UpdateView):
     model = Reservation
-    fields = "__all__"
+    fields = ("owner", "price_service", "client")
     template_name = "update_view.html"
     success_url = reverse_lazy("reservation_list")
 
@@ -219,23 +220,43 @@ class ReservationDeleteView(DeleteView):
         return get_object_or_404(Reservation, id=id_)
 
 
-#
-# class NewReservation(View):
-#     def get(self, request):
-#         return render(request, "new_reservation_view.html", {"hotels_list": Hotel.objects.all()})
-#
-#
-#     def post(self, request):
-#         print(Room.objects.filter(hotel=Hotel.objects.get(name=request.POST["hotels"])))
-#         form = ReservationCreateForm
-#         return render(request, f"new_create.html", {"form":form})
-
 # ==================================== ROOM RESERVATION VIEWS ==========================================================
 
 class RoomReservationCreateView(CreateView):
-
     model = RoomReservation
+    # fields = ["room", "date_from", "date_to", "price", "currency"]
     fields = "__all__"
+    # form_class = RoomReservationCreateForm(instance=)
     template_name = "create_view.html"
     success_url = reverse_lazy("reservation_list")
 
+
+class RoomReservationDeleteView(DeleteView):
+    model = RoomReservation
+    template_name = "delete_view.html"
+    success_url = reverse_lazy("reservation_list")
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(RoomReservation, id=id_)
+
+
+class CreateContractView(View):
+    def get(self, request, id):
+        my_res = Reservation.objects.get(pk=id)
+        my_client = my_res.owner
+        row = 46
+        my_xl = openpyxl.load_workbook("doc_patterns/instyle.xlsx")
+        my_xl["Sheet1"]["P21"].value = my_res.date_of_reservation
+        my_xl["Sheet1"]["P26"].value = f"{my_res.get_data[0]} - {my_res.get_data[1]}"
+        my_xl["Sheet1"]["B31"].value = f"{my_client.first_name} {my_client.last_name}"
+        my_xl["Sheet1"]["P31"].value = my_client.date_of_birth
+        my_xl["Sheet1"]["B36"].value = \
+            f"{my_client.postcode} {my_client.city}\n{my_client.address}"
+        my_xl["Sheet1"]["P36"].value = my_client.phone_number
+        for participant in my_res.client.all():
+            my_xl["Sheet1"][f"B{row}"]= row-45
+            my_xl["Sheet1"][f"C{row}"] = f"{participant.first_name} {participant.last_name}"
+            row += 1
+        my_xl.save("doc_patterns/test.xlsx")
+        return render(request, "object_list.html")
