@@ -1,51 +1,54 @@
 {% extends "index.html" %}
 {% block content %}
-<table class="table table-striped">
+<table class="table table-striped col-12">
 <thead>
     <tr>
         {% for column in columns %}
         <th scope="col">{{ column }}</th>
         {% endfor %}
+        <th scope="col">Operacje</th>
     </tr>
 </thead>
 <tbody>
 {% for object in objects %}
     <tr>
         <th scope="row">{{ object.id }}</th>
+        {% if columns|length > 1 %}
         <td>
             {{ object.first_name }}
             {{ object.name }}
-            {% for room in object.room.all %}
-                {{ room.name }}
-            {% endfor %}
+            {{ object.owner }}
         </td>
+        {% endif %}
+        {% if columns|length > 2 %}
         <td>
             {{ object.last_name }}
             {{ object.continent }}
             {{ object.price }}
+            {% for region in object.get_unique_regions %}
+                {{ region.name }} - {{ region.country.name }} <br>
+            {% endfor %}
         </td>
+        {% endif %}
+        {% if columns|length > 3 %}
         <td>
             {{ object.date_of_birth|date:"Y-m-d" }}
             {{ object.country }}
             {{ object.currency.hash }}
-        </td>
-        <td>
-            {{ object.phone_number }}
-            {{ object.region }}
-            {{ object.hotel }}
-            {{ object.price_service }}
-        </td>
-        <td>
-            {{ object.email }}
             {{ object.date_of_reservation|date:"Y-m-d" }}
         </td>
+        {% endif %}
+        {% if columns|length > 4 %}
         <td>
-            <a href="{{ object.get_delete_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">usuń
-            </a>
-            <a href="{{object.get_update_url}}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">edytuj
-            </a>
-            <a href="{{object.get_detail_url}}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">szczegóły
-            </a>
+            {{ object.region }}
+            {{ object.hotel }}
+            {{ object.price }}
+        </td>
+        {% endif %}
+        <td>
+            <a href="{{ object.get_delete_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">usuń</a>
+            <a href="{{ object.get_update_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">edytuj</a>
+            <a href="{{ object.get_detail_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">szczegóły</a>
         </td>
     </tr>
 {% endfor %}

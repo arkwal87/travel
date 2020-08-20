@@ -1,0 +1,70 @@
+{% extends "index.html" %}
+{% block content %}
+<table class="table table-striped">
+<thead>
+    <tr>
+        {% for column in columns %}
+        <th scope="col">{{ column }}</th>
+        {% endfor %}
+        <th scope="col">Operacje</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <th scope="row">{{ object.id }}</th>
+        <td>
+            {{ object.name }}
+        </td>
+        <td>
+            {{ object.continent }}
+        </td>
+        <td>
+            {{ object.country }}
+        </td>
+        <td>
+            {{ object.region }}
+        </td>
+        <td>
+            <a href="{{ object.link }}">{{ object.link }}</a>
+        </td>
+        <td>
+            <a href="{{ object.get_delete_url}}" class="btn btn-info active" role="button" aria-pressed="true">Usuń</a>
+            <a href="{{ object.id }}/dodaj_pokoj" class="btn btn-info active" role="button" aria-pressed="true">Dodaj pokój</a>
+            <span class=></span>
+        </td>
+    </tr>
+</tbody>
+
+
+</table>
+    <br>
+    <div>
+
+    </div>
+<table class="table table-striped">
+<thead>
+<br>
+<tr>
+    {% for column in columns_room %}
+    <th scope="col">{{ column }}</th>
+    {% endfor %}
+</tr>
+</thead>
+    {% for room in object.room_set.all %}
+        <tr>
+            <td>{{ room.id }}</td>
+            <td>{{ room.name }}</td>
+            <td>{{ room.price }}</td>
+            <td>{{ room.currency }}</td>
+            <td>{{ room.room_size}}</td>
+            <td>{{ room.terrace_size}}</td>
+            <td>
+                <a href="{{ room.get_delete_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">usuń</a>
+                <a href="{{ room.get_update_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">edytuj</a>
+                <a href="{{ room.get_detail_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">szczegóły</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+    <br>
+{% endblock %}

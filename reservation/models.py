@@ -92,7 +92,7 @@ class Hotel(models.Model):
 
 class Room(models.Model):
     name = models.CharField(max_length=32)
-    price = models.FloatField()
+    price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     hotel = models.ForeignKey(Hotel, on_delete=models.SET_NULL, null=True)
     room_size = models.IntegerField(null=True)
@@ -115,8 +115,7 @@ class RoomReservation(models.Model):
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
     date_from = models.DateField()
     date_to = models.DateField()
-    price = models.DecimalField(max_digits=8, decimal_places=2)
-    currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
+    price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     reservation = models.ForeignKey("Reservation", on_delete=models.CASCADE)
 
     def get_delete_url(self):
@@ -137,8 +136,18 @@ class Reservation(models.Model):
         if RoomReservation.objects.filter(reservation=self).exists():
             date_from = RoomReservation.objects.filter(reservation=self).order_by("date_from").first().date_from
             date_to = RoomReservation.objects.filter(reservation=self).order_by("date_to").last().date_to
-            total_sum = RoomReservation.objects.filter(reservation=self).aggregate(Sum('price'))["price__sum"]
-            return [date_from, date_to, total_sum]
+            # total_sum = RoomReservation.objects.filter(reservation=self).aggregate(Sum('price'))["price__sum"]
+            return [date_from, date_to]
+
+    @property
+    def get_prices(self):
+        all_prices = {}
+        for room_res in RoomReservation.objects.filter(reservation=self):
+            if room_res.room.currency.hash in all_prices:
+                all_prices[room_res.room.currency.hash] += room_res.room.price
+            else:
+                all_prices[room_res.room.currency.hash] = room_res.room.price
+        return all_prices
 
     def get_detail_url(self):
         return f"/reservation/{self.pk}"
@@ -148,3 +157,10 @@ class Reservation(models.Model):
 
     def get_delete_url(self):
         return f"/reservation/{self.pk}/usun"
+
+    def get_unique_regions(self):
+        regions = []
+        for i in RoomReservation.objects.filter(reservation=self).distinct("room"):
+            if i.room.hotel.region not in regions:
+                regions.append(i.room.hotel.region)
+        return regions

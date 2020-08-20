@@ -18,8 +18,14 @@ class ReservationCreateForm(forms.ModelForm):
         fields = ("owner", "price_service", "client")
 
 
-class RoomReservationCreateForm(forms.ModelForm):
+class RoomCreateForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = "__all__"
+        widgets = {"hotel": forms.HiddenInput}
 
+
+class RoomReservationCreateForm(forms.ModelForm):
     class Meta:
         model = RoomReservation
         fields = "__all__"

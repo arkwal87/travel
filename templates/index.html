@@ -9,14 +9,10 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>InTravel Management Center</title>
+  <title>InStyle Travel Management Center</title>
 
   <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-{#    <meta name="viewport" content="width=device-width, initial-scale=1">#}
-{#    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">#}
-{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">#}
-
 
   <!-- Custom styles for this template -->
     <link href="{% static "css/simple-sidebar.css" %}" rel="stylesheet">
@@ -30,11 +26,10 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading">InStyle Travel </div>
+        <div class="sidebar-heading"><a class="" href="/">InStyle Travel</a> </div>
       <div class="list-group list-group-flush">
         <a class="list-group-item list-group-item-action bg-light" href="{% url 'client_list' %}">Klienci</a>
         <a class="list-group-item list-group-item-action bg-light" href="{% url 'hotel_list' %}" >Hotele</a>
-        <a class="list-group-item list-group-item-action bg-light" href="{% url 'room_list' %}" >Pokoje</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Płatności</a>
         <a class="list-group-item list-group-item-action bg-light" href="{% url 'reservation_list' %}">Rezerwacje</a>
       </div>
@@ -77,6 +72,9 @@
       <div class="container-fluid">
         <h1 class="mt-4"></h1>
           <p class="text-xl-center">System biura podróży InStyle Travel</p>
+{#<script>#}
+{#    alert('Hello');#}
+{#</script>#}
           {% block content %}
           {% endblock %}
 {#        <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>#}

@@ -5,10 +5,9 @@
             Cena:
         </div>
         <div class="col-10">
-            {% if object.price != 0 %}
-                {{ object.get_data.2 }}
-{#                {{ object.currency.hash }} ({{ object.currency_conversion }} PLN)#}
-            {% endif %}
+            {% for price in object.get_prices.items%}
+                {{ price.1 }} {{ price.0 }}<br>
+            {% endfor %}
         </div>
     </div>
     <div class="row">
@@ -67,29 +66,33 @@
         {% for column in columns2 %}
         <th scope="col">{{ column }}</th>
         {% endfor %}
+        <th scope="col">Operacje</th>
     </tr>
 </thead>
 <tbody>
-    {% for room in object.roomreservation_set.all %}
+    {% for room_reservation in object.roomreservation_set.all %}
     <tr>
-        <th scope="row">{{ room.id }}</th>
+        <th scope="row">{{ room_reservation.id }}</th>
         <td>
-            {{ room.room }}
+            {{ room_reservation.room }}
         </td>
         <td>
-            {{ room.room.hotel }}
+            {{ room_reservation.room.hotel }}
         </td>
         <td>
-            {{ room.price }}
+            {{ room_reservation.room.price }}
+{#            {% for price in room_reservation.room.price %}#}
+{#                {{ price }}#}
+{#            {% endfor %}#}
         </td>
         <td>
-            {{ room.currency.hash }}
+            {{ room_reservation.room.currency.hash }}
         </td>
         <td>
-            {{ room.date_from }}
+            {{ room_reservation.date_from }}
         </td>
         <td>
-            {{ room.date_to }}
+            {{ room_reservation.date_to }}
         </td>
         <td>
             <a href="{{ room.get_delete_url}}" class="btn btn-info active" role="button" aria-pressed="true">Usuń</a>
@@ -98,7 +101,7 @@
     {% endfor %}
 </tbody>
 </table>
-    <a href="/reservation/{{ object.id }}/dodaj_pokoj" class="btn btn-info active" role="button" aria-pressed="true">Dodaj pokój</a>
+    <a href="/reservation/{{ object.id }}/zakwaterowanie" class="btn btn-info active" role="button" aria-pressed="true">Dodaj pokój</a>
     <a href="{{ object.get_delete_url}}" class="btn btn-info active" role="button" aria-pressed="true">Usuń</a>
     <a href="{{ object.id }}/umowa" class="btn btn-info active" role="button" aria-pressed="true">Twórz umowę</a>
 {% endblock %}

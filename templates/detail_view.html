@@ -4,56 +4,75 @@
 <thead>
     <tr>
         {% for column in columns %}
-        <th scope="col">{{ column }}</th>
+            <th scope="col">{{ column }}</th>
         {% endfor %}
+        <th scope="col">Operacje</th>
     </tr>
 </thead>
 <tbody>
     <tr>
         <th scope="row">{{ object.id }}</th>
-        <td>
-            {{ object.first_name }}
-            {{ object.name }}
-            {{ object.room }}
-        </td>
-        <td>
-            {{ object.last_name }}
-            {{ object.continent }}
-            {{ object.price }}
-        </td>
-        <td>
-            {{ object.date_of_birth|date:"Y-m-d" }}
-            {{ object.country }}
-            {{ object.currency.hash }}
-        </td>
-        <td>
-            {{ object.phone_number }}
-            {{ object.region }}
-            {{ object.hotel }}
-            {{ object.price_service }}
-        </td>
-        <td>
-            {{ object.email }}
-            <a href="{{ object.link }}">{{ object.link }}</a>
-            {{ object.date_of_reservation }}
-        </td>
-        <td>
-            {{ object.date_from }}
-{#            {{ object.reservation_set.all }}#}
-{#            {{ my_reservations }}#}
-            {% for res in object.reservation_set.all %}
-                <a href="/reservation/{{ res.id }}">{{ res.id }} - {{ res.room.hotel.name }}
-                    ({{ res.date_of_reservation|date:"Y-m-d" }})<br></a>
-            {% endfor %}
-        </td>
-        <td>
-            {{ object.date_to }}
-        </td>
-        <td>
-            {% for client in my_client_list %}
-               {{ client.name }} <br>
-            {% endfor %}
-        </td>
+        {% if columns|length > 1 %}
+            <td>
+                {{ object.first_name }}
+                {{ object.name }}
+                {{ object.room }}
+            </td>
+        {% endif %}
+        {% if columns|length > 2 %}
+            <td>
+                {{ object.last_name }}
+                {{ object.continent }}
+                {{ object.price }}
+            </td>
+        {% endif %}
+        {% if columns|length > 3 %}
+            <td>
+                {{ object.date_of_birth|date:"Y-m-d" }}
+                {{ object.country }}
+                {{ object.currency.hash }}
+            </td>
+        {% endif %}
+        {% if columns|length > 4 %}
+            <td>
+                {{ object.phone_number }}
+                {{ object.region }}
+                {{ object.hotel }}
+                {{ object.price_service }}
+            </td>
+        {% endif %}
+        {% if columns|length > 5 %}
+            <td>
+                {{ object.email }}
+                <a href="{{ object.link }}">{{ object.link }}</a>
+                {{ object.date_of_reservation }}
+            </td>
+        {% endif %}
+        {% if columns|length > 6 %}
+            <td>
+                {{ object.date_from }}
+    {#            {{ object.reservation_set.all }}#}
+    {#            {{ my_reservations }}#}
+                {% for res in owned_reservations %}
+                    <a href="/reservation/{{ res.id }}">{{ res.id }} - {{ res.room.hotel.name }}({{ res.date_of_reservation|date:"Y-m-d" }})<br></a>
+                {% endfor %}
+            </td>
+        {% endif %}
+        {% if columns|length > 7 %}
+            <td>
+                {{ object.date_to }}
+                {% for res in object.reservation_set.all %}
+                    <a href="/reservation/{{ res.id }}">{{ res.id }} - {{ res.room.hotel.name }}({{ res.date_of_reservation|date:"Y-m-d" }})<br></a>
+                {% endfor %}
+            </td>
+        {% endif %}
+        {% if columns|length > 8 %}
+            <td>
+                {% for client in my_client_list %}
+                   {{ client.name }} <br>
+                {% endfor %}
+            </td>
+        {% endif %}
         <td>
             <a href="{{ object.get_delete_url}}" class="btn btn-info active" role="button" aria-pressed="true">Usuń</a>
             <span class=></span>
@@ -68,6 +87,7 @@
     {% endfor %}
 </ul>
 </div>
-{#<a href="dodaj" class="btn btn-info active" role="button" aria-pressed="true">Dodaj klienta</a>#}
+
+<a href="{{ object.id }}/dodaj_pokoj" class="btn btn-info active" role="button" aria-pressed="true">Dodaj</a>
 
 {% endblock %}

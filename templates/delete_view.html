@@ -5,11 +5,8 @@
     <form method="post">
     {% csrf_token %}
         <p>Czy na pewno chcesz usunąć {{ object }}</p>
-{#        <input type="submit" value="Tak">#}
         <button type="submit" class="btn btn-info active">Tak</button>
         <a href="javascript:history.go(-1)" class="btn btn-info active" role="button" aria-pressed="true">Nie</a>
     </form>
 </div>
-{#    {% include "object_list.html" %}#}
-
 {% endblock %}
