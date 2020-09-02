@@ -132,11 +132,10 @@ class Reservation(models.Model):
         return f"Numer {self.pk}"
 
     @property
-    def get_data(self):
+    def get_dates(self):
         if RoomReservation.objects.filter(reservation=self).exists():
             date_from = RoomReservation.objects.filter(reservation=self).order_by("date_from").first().date_from
             date_to = RoomReservation.objects.filter(reservation=self).order_by("date_to").last().date_to
-            # total_sum = RoomReservation.objects.filter(reservation=self).aggregate(Sum('price'))["price__sum"]
             return [date_from, date_to]
 
     @property
@@ -164,3 +163,8 @@ class Reservation(models.Model):
             if i.room.hotel.region not in regions:
                 regions.append(i.room.hotel.region)
         return regions
+
+
+class Message(models.Model):
+    date_of_message = models.DateField(auto_now_add=True, blank=True)
+    message_text = models.TextField()

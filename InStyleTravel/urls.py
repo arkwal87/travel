@@ -15,12 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView
-
-from reservation import views
+from reservation.views import MyTemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", TemplateView.as_view(template_name="index.html")),
-    path("reservation/", include("reservation.urls"))
+    path("", MyTemplateView.as_view(), name="style_main_page"),
+    path("reservation/", include("reservation.urls")),
+    path("", include("users.urls"))
 ]

@@ -1,46 +1,8 @@
-{#{% extends "index.html" %}#}
-{#{% block content %}#}
-{#<table class="table table-striped">#}
-{#<thead>#}
-{#    <tr>#}
-{#        <th scope="col">#</th>#}
-{#        <th scope="col">Imię</th>#}
-{#        <th scope="col">Nazwisko</th>#}
-{#        <th scope="col">Data urodzenia</th>#}
-{#        <th scope="col">Telefon</th>#}
-{#        <th scope="col">e-mail</th>#}
-{#    </tr>#}
-{#</thead>#}
-{#<tbody>#}
-{#    <tr>#}
-{#        <th scope="row">{{ object.id }}</th>#}
-{#        <td>#}
-{#            <input type="text" value="{{ object.first_name }}">#}
-{#        </td>#}
-{#        <td>#}
-{#            <input type="text" value="{{ object.last_name }}">#}
-{#        </td>#}
-{#        <td>#}
-{#            <input type="text" value="{{ object.date_of_birth|date:"Y-m-d" }}">#}
-{#        </td>#}
-{#        <td>#}
-{#            <input type="text" value="{{ object.phone_number }}">#}
-{#        </td>#}
-{#        <td>#}
-{#            <input type="text" value="{{ object.email }}">#}
-{#        </td>#}
-{#    </tr>#}
-{#</tbody>#}
-{#</table>#}
-{#<a href="{% url 'client_create' %}" class="btn btn-info active" role="button" aria-pressed="true">Dodaj klienta</a>#}
-{##}
-{#{% endblock %}#}
-
 {% extends "index.html" %}
 {% block content %}
     <div class="container">
     {{ info }}
-    <form method="post">
+    <form method="post" action="">
     {% csrf_token %}
         <table>
             {{ form.as_table }}
@@ -48,6 +10,5 @@
         <input type="submit" value="Zatwierdź">
     </form>
 </div>
-{#    {% include "object_list.html" %}#}
 
 {% endblock %}

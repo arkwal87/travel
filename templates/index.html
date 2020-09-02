@@ -51,9 +51,21 @@
 {#            <li class="nav-item active">#}
 {#              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>#}
 {#            </li>#}
-            <li class="nav-item">
-              <a class="nav-link" href="#">Logowanie</a>
-            </li>
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Zarejestruj</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">Profil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Wyloguj</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Zaloguj</a>
+                </li>
+            {% endif %}
 {#            <li class="nav-item dropdown">#}
 {#              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
 {#                Dropdown#}
@@ -72,11 +84,38 @@
       <div class="container-fluid">
         <h1 class="mt-4"></h1>
           <p class="text-xl-center">System biura podróży InStyle Travel</p>
-{#<script>#}
-{#    alert('Hello');#}
-{#</script>#}
+          {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+          {% endif %}
           {% block content %}
           {% endblock %}
+            {% if birthday_list.0|length != 0 or birthday_list.1|length != 0 or birthday_list.2|length != 0 %}
+                <script> alert('Oho! Szykują się urodzinki! :)');</script>
+            {% endif %}
+            {% if birthday_list.0|length != 0 %}
+                Dzisiaj urodziny obchodzi:<br>
+                {% for client in birthday_list.0 %}
+                    <a href="/reservation/klienci/{{ client.id }}">{{ client }}<br></a>
+                {% endfor %}
+            {% endif %}
+            <br>
+            {% if birthday_list.1|length != 0%}
+                Za tydzień urodziny obchodzi:<br>
+                {% for client in birthday_list.1 %}
+                    <a href="/reservation/klienci/{{ client.id }}">{{ client }}<br></a>
+                {% endfor %}
+            {% endif %}
+            <br>
+            {% if birthday_list.2|length != 0%}
+                Za 3 tygodnie urodziny obchodzi:<br>
+                {% for client in birthday_list.2 %}
+                    <a href="/reservation/klienci/{{ client.id }}">{{ client }}<br></a>
+                {% endfor %}
+            {% endif %}
 {#        <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>#}
 {#        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>. The top navbar is optional, and just for demonstration. Just create an element with the <code>#menu-toggle</code> ID which will toggle the menu when clicked.</p>#}
       </div>

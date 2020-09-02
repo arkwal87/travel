@@ -1,13 +1,39 @@
 import openpyxl
 
-from datetime import date
+from datetime import date, datetime, timedelta
 from django.shortcuts import render, get_object_or_404, redirect
 
 # Create your views here.
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, View, DeleteView, UpdateView
+from django.views.generic import CreateView, DetailView, View, DeleteView, UpdateView, TemplateView
 from reservation.models import Client, Hotel, Room, Reservation, RoomReservation, Country, Continent, Region
 from reservation.forms import ReservationCreateForm, RoomReservationCreateForm, RoomCreateForm
+
+
+# ================================== CLIENTS VIEWS =====================================================================
+
+class MyTemplateView(TemplateView):
+    template_name = "index.html"
+
+    def get_birthday_3(self):
+        check_date = date.today()
+        birthday_list = [[], [], []]
+        for client in Client.objects.all():
+            if check_date.month == client.date_of_birth.month and check_date.day == client.date_of_birth.day:
+                birthday_list[0].append(client)
+            elif (check_date + timedelta(days=7)).month == client.date_of_birth.month and \
+                    (check_date + timedelta(days=7)).day == client.date_of_birth.day:
+                birthday_list[1].append(client)
+            elif (check_date + timedelta(days=21)).month == client.date_of_birth.month and \
+                    (check_date + timedelta(days=21)).day == client.date_of_birth.day:
+                birthday_list[2].append(client)
+        return birthday_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        birthday_list = self.get_birthday_3()
+        context.update({"birthday_list": birthday_list})
+        return context
 
 
 # ================================== CLIENTS VIEWS =====================================================================
@@ -226,7 +252,7 @@ class ReservationDetailView(DetailView):
 
 class ReservationUpdateView(UpdateView):
     model = Reservation
-    fields = ("#", "owner", "price_service", "client")
+    fields = ("owner", "price_service", "client")
     template_name = "update_view.html"
     success_url = reverse_lazy("reservation_list")
 
