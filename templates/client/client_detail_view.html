@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+<div class="mt-2 col-md-12 row">
+    <div class="col-xs-12">
+    Klient: <br>
+    Data urodzenia: <br>
+    Adres e-mail: <br>
+    Numer telefonu: <br>
+    Referencje: <br>
+    Lider: <br>
+    </div>
+    <div class="col-xs-12 ml-5">
+        {{ object.last_name}} {{ object.first_name }}<br>
+        {{ object.date_of_birth|date:"Y-m-d" }}<br>
+        {{ object.email }}<br>
+        {{ object.phone_number }}<br>
+        {{ object.reference }}<br>
+        {{ object.leader }}<br>
+    </div>
+</div>
+<div class="mt-5 col-md-12 mr-5">
+<table class="table table-striped" id="detailTable">
+  <thead>
+    <tr>
+      <th scope="col">Numer rezerwacji</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for reservation in object.reservation_set.all %}
+    <tr>
+        <th scope="row">1</th>
+      <td></td>
+      <td></td>
+      <td>@</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+    {% for res in object.reservation_set.all %}
+        <a href="/reservation/{{ res.id }}">{{ res.id }} - {{ res.room.hotel.name }}({{ res.date_of_reservation|date:"Y-m-d" }})<br></a>
+    {% endfor %}
+</div>
+
+    <script src={% static "js/app.js"%}></script>
+{% endblock %}
