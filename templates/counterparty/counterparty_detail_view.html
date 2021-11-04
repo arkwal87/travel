@@ -1,10 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+<div class="mt-2 col-md-12 row">
+    <div class="col-xs-12">
+    Klient: <br>
+    Data urodzenia: <br>
+    Adres e-mail: <br>
+    Numer telefonu: <br>
+    Referencje: <br>
+    Lider: <br>
+    </div>
+    <div class="col-xs-12 ml-5">
+        {{ object.short_name}} - {{ object.full_name }}<br>
+        {{ object.VAT_no }}<br>
+        {{ object.country }}<br>
+        {{ object.post_code }}<br>
+        {{ object.city }}<br>
+        {{ object.address }}<br>
+    </div>
+</div>
+<div class="mt-4">
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="tab-contracts" data-bs-toggle="tab" data-bs-target="#contracts" type="button"
+              role="tab" aria-controls="contracts" aria-selected="true">Kontrakty</button>
+      </li>
+      <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-products" data-bs-toggle="tab" data-bs-target="#prodcuts" type="button"
+            role="tab" aria-controls="products" aria-selected="false">Produkty</button>
+      </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="contracts" role="tabpanel" aria-labelledby="contracts-tab">
+          {% include "counterparty/contracts_tab.html" %}
+      </div>
+      <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="products-tab">
+          {% include "counterparty/products_tab.html" %}
+      </div>
+  </div>
+</div>
+    <script src={% static "js/app.js" %}></script>
+    <script src={% static "js/tabs.js" %}></script>
+{% endblock %}

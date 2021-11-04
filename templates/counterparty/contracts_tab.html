@@ -1,0 +1,28 @@
+<div class="mt-4">
+    <table class="table table-striped" id="contractsTable">
+        <thead>
+            <tr>
+                <th scope="col">Umowa</th>
+                <th scope="col">Data rezerwacji</th>
+                <th scope="col">Data od</th>
+                <th scope="col">Data do</th>
+                <th scope="col">Właściciel kontraktu</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in unique_contracts %}
+            <tr>
+                <td style="width: 10%">
+                    <a href="/reservation/umowy/{{ item.contract.id }}">{{ item.contract.id }}</a>
+                </td>
+                <td>{{ item.contract.date_of_contract }}</td>
+                <td>{{ item.contract.get_dates.0|date:"Y-m-d" }}</td>
+                <td>{{ item.contract.get_dates.1|date:"Y-m-d" }}</td>
+                <td style="width: 25%">
+                    <a href="/reservation/klienci/{{ item.contract.owner.id }}">{{ item.contract.owner }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

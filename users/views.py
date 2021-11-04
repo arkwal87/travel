@@ -19,18 +19,23 @@ from django.contrib.auth.decorators import login_required
 #             # return redirect("style_main_page")
 #             return render(request, "users/register.html", context={"form": form})
 
-def RegisterView(request):
+def registerView(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Twoje konto zostało stworzone. Możesz się zalogować")
+            username = form.cleaned_data.get("username")
+            messages.success(request, f"Stworzono użytkownika {username}!")
             return redirect("login")
     else:
         form = UserRegistrationForm()
-        return render(request, "users/register.html", context={"form": form})
+    return render(request, "register.html", context={"form": form})
 
 
 @login_required
-def ProfileView(request):
+def profileView(request):
     return render(request, "users/profile.html")
+
+# def RegisterView(request):
+#     form = UserCreationForm()
+#     return render(request, "register.html", {"form":form})

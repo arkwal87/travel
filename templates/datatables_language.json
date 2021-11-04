@@ -1,4 +1,4 @@
-datatables_language = {
+{
     "processing": "Przetwarzanie...",
     "search": "Szukaj:",
     "lengthMenu": "Pokaż _MENU_ pozycji",

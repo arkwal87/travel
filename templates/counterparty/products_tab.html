@@ -1,0 +1,32 @@
+<div class="mt-4">
+    <table class="table table-striped" id="productsTable">
+        <thead>
+            <tr>
+                <th scope="col">ID produktu</th>
+                <th scope="col">Produkt</th>
+                <th scope="col">Umowa</th>
+                <th scope="col">Data od</th>
+                <th scope="col">Data do</th>
+                <th scope="col">Właściciel kontraktu</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in object.contractroom_set.all %}
+            <tr>
+                <td style="width: 10%">
+                    <a href="/reservation/pokoje/{{ item.room.id }}">{{ item.room.id }}</a>
+                </td>
+                <td>{{ item.room.name }}</td>
+                <td style="width: 10%">
+                    <a href="/reservation/umowy/{{ item.contract.id }}">{{ item.contract.id }}</a>
+                </td>
+                <td>{{ item.contract.get_dates.0 }}</td>
+                <td>{{ item.contract.get_dates.1 }}</td>
+                <td style="width: 25%">
+                    <a href="/reservation/klienci/{{ item.contract.owner.id }}">{{ item.contract.owner }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

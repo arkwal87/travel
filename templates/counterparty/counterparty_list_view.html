@@ -2,10 +2,10 @@
 {% block content %}
 {% load static %}
 <div class="mt-2">
-    <a href="dodaj" class="btn btn-info active" role="button" aria-pressed="true">Dodaj nowego kontrahenta</a>
+    <a href="{% url 'counterparty_create' %}" class="btn btn-info active" role="button" aria-pressed="true">Dodaj nowego kontrahenta</a>
 </div>
 <div class="mt-2">
-  <table class="table table-striped col-12" id="listTable">
+  <table class="table table-striped" id="listTable">
     <thead>
       <tr>
         {% for column in columns %}

@@ -1,0 +1,28 @@
+<div class="mt-4">
+<table class="table table-striped" id="ownersTable">
+  <thead>
+    <tr>
+      <th scope="col" style="width: 10%">Kontrakt</th>
+      <th scope="col">Data zawarcia</th>
+      <th scope="col">Data od</th>
+      <th scope="col">Data do</th>
+      <th scope="col">Uczestnicy</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for contract in owned_contracts %}
+    <tr>
+      <td style="width: 10%"><a href="/reservation/umowy/{{ contract.id }}">{{ contract.id }}</a></td>
+      <td>{{ contract.date_of_contract }}</td>
+      <td>{{ contract.get_dates.0|date:"Y-m-d" }}</td>
+      <td>{{ contract.get_dates.1|date:"Y-m-d" }}</td>
+      <td>
+        {% for client in contract.client.all %}
+          <a href="/reservation/klienci/{{ client.id }}">{{ client }}</a>
+        {% endfor %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>

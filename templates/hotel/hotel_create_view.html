@@ -1,0 +1,38 @@
+{% extends "index.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container ml-5" style="width: 500px">
+        <form method="post">
+            {{ info }}
+            {% csrf_token %}
+            <table>
+              <div id="div_id_continent" class="form-group">
+                <label for="id_cotinent" class> Kontynent </label>
+                <div class>
+                  <select name="continent" class="select form-control" id="id_continent">
+                    <option value="">---------</option>
+                    {% for continent in continents %}
+                      <option value="{{ continent.id }}">{{ continent.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div id="div_id_country" class="form-group">
+                <label for="id_county" class> Kraj </label>
+                <div class>
+                  <select name="country" class="select form-control" id="id_country">
+                    <option value="">---------</option>
+                    {% for country in countries %}
+                      <option value="{{ country.id }}">{{ country.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              {{ form|crispy }}
+            </table>
+            <input type="submit" value="Dodaj" class="btn btn-info active">
+        </form>
+    </div>
+    <script src={% static "js/app.js"%}></script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+<div class="mt-2 col-md-12 row">
+  <div class="col-xs-12">
+  Villa: <br>
+  Kontynent: <br>
+  Kraj: <br>
+  Region: <br>
+  Powierzchnia: <br>
+  Liczba pokoi: <br>
+  Basen: <br>
+  Link: <br>
+  </div>
+  <div class="col-xs-12 ml-5">
+    {{ object.name }}<br>
+    {{ object.region.country.continent }}<br>
+    {{ object.region.country }}<br>
+    {{ object.region}}<br>
+    {{ object.size|safe }} m<sup>2</sup><br>
+    {{ object.rooms_no }}<br>
+    {% if object.pool is True %}
+        TAK<br>
+    {% else %}
+        NIE<br>
+    {% endif %}
+  </div>
+</div>
+<div class="mt-4">
+  <table class="table table-striped" id="clientsTable">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 10%">Kontrakt</th>
+        <th scope="col">Data zawarcia</th>
+        <th scope="col">Właściciel</th>
+        <th scope="col">Data od</th>
+        <th scope="col">Data do</th>
+        <th scope="col">Pozostali uczestnicy</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in contract_list %}
+      <tr>
+        <td style="width: 10%"><a href="/reservation/umowy/{{ item.contract.id }}">{{ item.contract.id }}</a></td>
+        <td>{{ item.contract.date_of_contract }}</td>
+        <td><a href="/reservation/klienci/{{ item.contract.owner.id }}">{{ item.contract.owner }}</a></td>
+        <td>{{ item.contract.get_dates.0|date:"Y-m-d" }}</td>
+        <td>{{ item.contract.get_dates.1|date:"Y-m-d" }}</td>
+        <td>
+          {% for client in item.contract.client.all %}
+            {% if client != contract.owner %}
+              <a href="/reservation/klienci/{{ client.id }}">{{ client }}</a>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<script src={% static "js/tabs.js" %}></script>
+<script src={% static "js/app.js" %}></script>
+{% endblock %}

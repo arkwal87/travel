@@ -1,10 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "index.html" %}
+{% block content %}
+{% load static %}
+<div class="mt-2">
+    <a href="{% url 'room_create' %}" class="btn btn-info active" role="button" aria-pressed="true">Nowa rezerwacja</a>
+</div>
+<div class="mt-2">
+<table class="table table-striped col-12" id="listTable">
+<thead>
+    <tr>
+        {% for column in columns %}
+            <th scope="col">{{ column }}</th>
+        {% endfor %}
+        <th scope="col">Operacje</th>
+    </tr>
+</thead>
+<tbody>
+{% for object in object_list %}
+    <tr>
+        <td>
+            {{ object.date_of_reservation }}
+        </td>
+        <td>
+            {{ object.get_nights_number }}
+        </td>
+        <td>
+            {{ object.hotel.country }}
+        </td>
+        <td>
+            {{ object.hotel.region }}
+        </td>
+        <td>
+            {{ object.hotel.name }}
+        </td>
+        <td>
+            {{ object.room_number }}
+        </td>
+        <td>
+            {{ object.room_category }}
+        </td>
+        <td>
+            {{ object.date_from }} - {{ object.date_to }}
+        </td>
+        <td>
+            {{ object.price_offer }}
+        </td>
+        <td>
+            {{ object.offer_currency }}
+        </td>
+        <td>
+            {{ object.price_net }}
+        </td>
+        <td>
+            {{ object.net_currency }}
+        </td>
+        <td>
+            {{ object.counterparty }}
+        </td>
+        <td>
+            <a href="{{ object.get_delete_url }}"
+               class="btn btn-secondary active btn-sm"
+               role="button"
+               aria-pressed="true">
+                usuń
+            </a>
+            <a href="{{ object.get_update_url }}"
+               class="btn btn-secondary active btn-sm"
+               role="button"
+               aria-pressed="true">
+                edytuj
+            </a>
+            <a href="{{ object.get_detail_url }}"
+               class="btn btn-secondary active btn-sm"
+               role="button"
+               aria-pressed="true">
+                szczegóły
+            </a>
+        </td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+{#    <div class="d-flex justify-content-center">#}
+{#{% if is_paginated %}#}
+{#    {% if page_obj.has_previous %}#}
+{#        <a class="btn btn-outline-secondary mb-4" href="?page=1">Pierwsza</a>#}
+{#        <a class="btn btn-outline-secondary mb-4"#}
+{#           href="?page={{ page_obj.previous_page_number }}">#}
+{#            Poprzednia</a>#}
+{#    {% endif %}#}
+{#    {% for num in page_obj.paginator.page_range %}#}
+{#        {% if page_obj.number == num %}#}
+{#            <a class="btn btn-secondary mb-4" href="?page={{ num }}">{{ num }}</a>#}
+{#        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}#}
+{#            <a class="btn btn-outline-secondary mb-4" href="?page={{ num }}">{{ num }}</a>#}
+{#        {% endif %}#}
+{#    {% endfor %}#}
+{#    {% if page_obj.has_next %}#}
+{#        <a class="btn btn-outline-secondary mb-4"#}
+{#           href="?page={{ page_obj.next_page_number }}">#}
+{#            Nastepna</a>#}
+{#        <a class="btn btn-outline-secondary mb-4"#}
+{#           href="?page={{ page_obj.paginator.num_pages }}">#}
+{#            Ostania</a>#}
+{#    {% endif %}#}
+{#{% endif %}#}
+{#</div>#}
+
+
+
+{% endblock %}

@@ -1,11 +1,11 @@
 {% extends "index.html" %}
 {% block content %}
 {% load static %}
-<div class="mt-2">
-    <a href="{% url 'room_create' %}" class="btn btn-info active" role="button" aria-pressed="true">Dodaj nowy hotel</a>
+<div class="mt-4">
+    <a href="{% url 'hotel_create' %}" class="btn btn-secondary" role="button" aria-pressed="true">Dodaj nowy hotel</a>
 </div>
-<div class="mt-2">
-<table class="table table-striped col-12" id="listTable">
+<div class="mt-4">
+<table class="table table-striped" id="listTable">
 <thead>
     <tr>
         {% for column in columns %}
@@ -21,10 +21,10 @@
             {{ object.name }}
         </td>
         <td>
-            {{ object.continent }}
+            {{ object.region.country.continent }}
         </td>
         <td>
-            {{ object.country }}
+            {{ object.region.country }}
         </td>
         <td>
             {{ object.region }}

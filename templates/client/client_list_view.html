@@ -1,11 +1,11 @@
 {% extends "index.html" %}
 {% block content %}
 {% load static %}
-<div class="mt-2">
+<div class="mt-4">
     <a href="dodaj" class="btn btn-info active" role="button" aria-pressed="true">Dodaj nowego klienta</a>
 </div>
-<div class="mt-2">
-<table class="table table-striped col-12" id="listTable">
+<div class="mt-4">
+<table class="table table-striped" id="listTable">
 <thead>
     <tr>
         {% for column in columns %}

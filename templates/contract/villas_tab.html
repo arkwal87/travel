@@ -1,0 +1,35 @@
+<div class="mt-4">
+    <a href="/reservation/{{ object.id }}/zakwaterowanie" class="btn btn-info active" role="button" aria-pressed="true">Dodaj pokój</a>
+    <a href="{{ object.get_delete_url}}" class="btn btn-info active" role="button" aria-pressed="true">Usuń</a>
+    <a href="{{ object.id }}/umowa" class="btn btn-info active" role="button" aria-pressed="true">Twórz umowę</a>
+</div>
+<div class="mt-4">
+<table class="table table-striped" id="villasTable" >
+  <thead>
+    <tr>
+      <th scope="col">Hotel</th>
+      <th scope="col">Pokój</th>
+      <th scope="col">Data od</th>
+      <th scope="col">Data do</th>
+      <th scope="col">Kontrahent</th>
+      <th scope="col">Operacje</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for room in object.contractvilla_set.all %}
+  <tr>
+    <td>{{ room.villa.hotel.name }}</td>
+    <td>{{ room.villa.name }}</td>
+    <td>{{ room.date_from}}</td>
+    <td>{{ room.date_to}}</td>
+    <td>{{ room.counterparty }}</td>
+    <td>
+        <a href="{{ room.get_delete_url }}" class="btn btn-secondary active btn-sm " role="button" aria-pressed="true">usuń</a>
+        <a href="{{ room.get_update_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">edytuj</a>
+        <a href="{{ room.get_detail_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">szczegóły</a>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>

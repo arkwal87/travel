@@ -17,6 +17,8 @@
   <!-- Custom styles for this template -->
     <link href="{% static "css/simple-sidebar.css" %}" rel="stylesheet">
 
+  <!-- DataTables -->
+    <link rel="stylesheet" type="text/css" href={% static "/DataTables/datatables.css"%}>
 
 </head>
 
@@ -26,12 +28,15 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-        <div class="sidebar-heading"><a class="" href="/">InStyle Travel</a> </div>
+      <div class="sidebar-heading"><a class="" href="/">InStyle Travel</a></div>
       <div class="list-group list-group-flush">
         <a class="list-group-item list-group-item-action bg-light" href="{% url 'client_list' %}">Klienci</a>
+        <a class="list-group-item list-group-item-action bg-light" href="{% url 'counterparty_list' %}">Kontrahenci</a>
         <a class="list-group-item list-group-item-action bg-light" href="{% url 'hotel_list' %}" >Hotele</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Płatności</a>
-        <a class="list-group-item list-group-item-action bg-light" href="{% url 'reservation_list' %}">Rezerwacje</a>
+        <a class="list-group-item list-group-item-action bg-light" href="{% url 'villa_list' %}" >Wille</a>
+{#        <a class="list-group-item list-group-item-action bg-light" href="#" >Płatności</a>#}
+{#        <a class="list-group-item list-group-item-action bg-light" href="{% url 'reservation_list' %}">Rezerwacje</a>#}
+        <a class="list-group-item list-group-item-action bg-light" href="{% url 'contract_list' %}">Umowy</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -40,7 +45,7 @@
     <div id="page-content-wrapper">
 
       <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
+{#        <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>#}
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -53,9 +58,6 @@
 {#            </li>#}
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Zarejestruj</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{% url 'profile' %}">Profil</a>
                 </li>
                 <li class="nav-item">
@@ -64,6 +66,9 @@
             {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'login' %}">Zaloguj</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Zarejestruj</a>
                 </li>
             {% endif %}
 {#            <li class="nav-item dropdown">#}
@@ -83,7 +88,7 @@
 
       <div class="container-fluid">
         <h1 class="mt-4"></h1>
-          <p class="text-xl-center">System biura podróży InStyle Travel</p>
+{#          <p class="text-xl-center">System biura podróży InStyle Travel</p>#}
           {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">
@@ -126,8 +131,7 @@
   <!-- /#wrapper -->
 
   <!-- Bootstrap core JavaScript -->
-    <script src={% static "jquery/jquery.min.js" %}></script>
-
+  <script src={% static "jquery/jquery.min.js" %}></script>
   <script src={% static "bootstrap/js/bootstrap.bundle.min.js" %}></script>
 
   <!-- Menu Toggle Script -->
@@ -137,6 +141,10 @@
       $("#wrapper").toggleClass("toggled");
     });
   </script>
+
+  <!-- DataTables -->
+  <script type="text/javascript" charset="utf8" src={% static "/DataTables/datatables.js" %}></script>
+  <script type="text/javascript" charset="utf8" src={% static "/DataTables/datatables_app.js" %}></script>
 
 </body>
 

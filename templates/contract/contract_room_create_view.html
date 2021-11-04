@@ -1,0 +1,60 @@
+{% extends "index.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container ml-5" style="width: 500px">
+        <form method="post">
+            {{ info }}
+            {% csrf_token %}
+            <table>
+              <div id="div_id_continent" class="form-group">
+                <label for="id_cotinent" class> Kontynent </label>
+                <div class>
+                  <select name="continent" class="select form-control" id="id_continent">
+                    <option value="" selected="">---------</option>
+                    {% for continent in continents %}
+                      <option value="{{ continent.id }}">{{ continent.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div id="div_id_country" class="form-group">
+                <label for="id_country" class> Kraj </label>
+                <div class>
+                  <select name="country" class="select form-control" id="id_country">
+                    <option value="" selected="">---------</option>
+                    {% for country in coutries %}
+                      <option value="{{ country.id }}">{{ country.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div id="div_id_region" class="form-group">
+                <label for="id_region" class> Region </label>
+                <div class>
+                  <select name="country" class="select form-control" id="id_region">
+                    <option value="" selected="">---------</option>
+                    {% for region in regions %}
+                      <option value="{{ region.id }}">{{ region.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div id="div_id_hotel" class="form-group">
+                <label for="id_hotel" class> Hotel </label>
+                <div class>
+                  <select name="hotel" class="select form-control" id="id_hotel">
+                    <option value="" selected="">---------</option>
+                    {% for hotel in hotels %}
+                      <option value="{{ hotel.id }}">{{ hotel.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              {{ form|crispy }}
+            </table>
+            <input type="submit" value="Dodaj" class="btn btn-info active">
+        </form>
+    </div>
+    <script src={% static "js/app.js"%}></script>
+{% endblock %}

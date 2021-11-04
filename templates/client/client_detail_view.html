@@ -7,6 +7,8 @@
     Data urodzenia: <br>
     Adres e-mail: <br>
     Numer telefonu: <br>
+    Adres: <br>
+        <br>
     Referencje: <br>
     Lider: <br>
     </div>
@@ -15,35 +17,32 @@
         {{ object.date_of_birth|date:"Y-m-d" }}<br>
         {{ object.email }}<br>
         {{ object.phone_number }}<br>
+        {{ object.postcode }} {{ object.city }}<br>
+        {{ object.address }}<br>
         {{ object.reference }}<br>
         {{ object.leader }}<br>
     </div>
 </div>
-<div class="mt-5 col-md-12 mr-5">
-<table class="table table-striped" id="detailTable">
-  <thead>
-    <tr>
-      <th scope="col">Numer rezerwacji</th>
-      <th scope="col"></th>
-      <th scope="col"></th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for reservation in object.reservation_set.all %}
-    <tr>
-        <th scope="row">1</th>
-      <td></td>
-      <td></td>
-      <td>@</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
-    {% for res in object.reservation_set.all %}
-        <a href="/reservation/{{ res.id }}">{{ res.id }} - {{ res.room.hotel.name }}({{ res.date_of_reservation|date:"Y-m-d" }})<br></a>
-    {% endfor %}
+<div class="mt-4">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-clients" data-bs-toggle="tab" data-bs-target="#home" type="button"
+                    role="tab" aria-controls="clients" aria-selected="true">Uczestnik</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-owners" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+                    role="tab" aria-controls="owners" aria-selected="false">Właściciel</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="clients" role="tabpanel" aria-labelledby="clients-tab">
+            {% include "client/clients_tab.html" %}
+        </div>
+        <div class="tab-pane fade" id="owners" role="tabpanel" aria-labelledby="owners-tab">
+            {% include "client/owners_tab.html" %}
+        </div>
+    </div>
 </div>
-
-    <script src={% static "js/app.js"%}></script>
+<script src={% static "js/tabs.js" %}></script>
+<script src={% static "js/app.js" %}></script>
 {% endblock %}

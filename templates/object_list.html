@@ -34,7 +34,7 @@
         <td>
             {{ object.date_of_birth|date:"Y-m-d" }}
             {{ object.country }}
-            {{ object.currency.hash }}
+{#            {{ object.currency.hash }}#}
             {{ object.date_of_reservation|date:"Y-m-d" }}
         </td>
         {% endif %}
@@ -43,6 +43,9 @@
             {{ object.region }}
             {{ object.hotel }}
             {{ object.price }}
+            {% if object.leader is True %}
+                TAK
+            {% endif %}
         </td>
         {% endif %}
         <td>
