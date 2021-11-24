@@ -1,0 +1,43 @@
+<div class="mt-4">
+<table class="table table-striped" id="trainsTable" >
+  <thead>
+    <tr>
+      <th scope="col">Pociag</th>
+      <th scope="col">Kabina</th>
+      <th scope="col">Wyżywienie</th>
+      <th scope="col">Data od</th>
+      <th scope="col">Data do</th>
+      <th scope="col">Z</th>
+      <th scope="col">Do</th>
+      <th scope="col">Kontrahent</th>
+      <th scope="col">Operacje</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for train_reservation in object.contracttrain_set.all %}
+  <tr>
+    <td>{{ train_reservation.train.name }}</td>
+    <td>{{ train_reservation.cabin_category }}</td>
+    <td>{{ train_reservation.meal_plan }}</td>
+    <td>{{ train_reservation.date_from|date:"Y-m-d"}}</td>
+    <td>{{ train_reservation.date_to|date:"Y-m-d"}}</td>
+    <td>{{ train_reservation.train.dest_from }}</td>
+    <td>{{ train_reservation.train.dest_to }}</td>
+    <td>{{ train_reservation.counterparty }}</td>
+    <td>
+        <a href="{% url 'contract_train_delete' id=object.id pk=train_reservation.id %}"
+           class="btn btn-secondary active btn-sm"
+           role="button"
+           aria-pressed="true">usun
+        </a>
+        <a href="{% url 'contract_train_update' id=object.id pk=train_reservation.id %}"
+           class="btn btn-secondary active btn-sm "
+           role="button"
+           aria-pressed="true">edytuj
+        </a>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>

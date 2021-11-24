@@ -4,6 +4,7 @@
             <tr>
                 <th scope="col">ID produktu</th>
                 <th scope="col">Produkt</th>
+                <th scope="col">Hotel</th>
                 <th scope="col">Umowa</th>
                 <th scope="col">Data od</th>
                 <th scope="col">Data do</th>
@@ -16,7 +17,32 @@
                 <td style="width: 10%">
                     <a href="/reservation/pokoje/{{ item.room.id }}">{{ item.room.id }}</a>
                 </td>
-                <td>{{ item.room.name }}</td>
+                <td style="width: 10%">
+                    {{ item.room.name }}
+                </td>
+                <td style="width: 10%">
+                    <a href="/reservation/umowy/{{ item.room.hotel.id }}">{{ item.room.hotel.name }}</a>
+                </td>
+                <td style="width: 10%">
+                    <a href="/reservation/umowy/{{ item.contract.id }}">{{ item.contract.id }}</a>
+                </td>
+                <td>{{ item.contract.get_dates.0 }}</td>
+                <td>{{ item.contract.get_dates.1 }}</td>
+                <td style="width: 25%">
+                    <a href="/reservation/klienci/{{ item.contract.owner.id }}">{{ item.contract.owner }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+        {% for item in object.contractvilla_set.all %}
+            <tr>
+                <td style="width: 10%">
+                    <a href="/reservation/pokoje/{{ item.villa.id }}">{{ item.villa.id }}</a>
+                </td>
+                <td style="width: 10%">
+                    {{ item.villa.name }}
+                </td>
+                <td style="width: 10%">
+                </td>
                 <td style="width: 10%">
                     <a href="/reservation/umowy/{{ item.contract.id }}">{{ item.contract.id }}</a>
                 </td>

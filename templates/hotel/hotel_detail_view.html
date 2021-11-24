@@ -3,14 +3,18 @@
 {% block content %}
 <div class="mt-2 col-md-12 row">
     <div class="col-xs-12">
+    ID: <br>
     Hotel: <br>
+    Kategoria: <br>
     Kontynent: <br>
     Kraj: <br>
     Region: <br>
     WWW: <br>
     </div>
     <div class="col-xs-12 ml-5">
+        {{ object.id }} <br>
         {{ object.name}} <br>
+        {{ object.category}} <br>
         {{ object.region.country.continent }}<br>
         {{ object.region.country }}<br>
         {{ object.region }}<br>

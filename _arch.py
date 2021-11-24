@@ -1,5 +1,6 @@
 # ====================== MODELS ========================================================================================
 
+
 # class Reservation2(models.Model):
 #     date_of_reservation = models.DateField()
 #     date_from = models.DateField()
@@ -74,8 +75,6 @@
 # class Payment(models.Model):
 #     reservation_no = models.ForeignKey("Reservation", on_delete=models.SET_NULL, null=True)
 #     paid = models.BooleanField(default=False)
-
-
 
 
 # ====================== VIEWS =========================================================================================
@@ -254,8 +253,6 @@
 #         fields = ("owner", "price_service", "client")
 
 
-
-
 # class RoomReservationCreateForm(forms.ModelForm):
 #     class Meta:
 #         model = RoomReservation
@@ -276,7 +273,6 @@
 
 # path("pokoje/", reservation_views.RoomListView.as_view(), name="room_list"),
 # path("pokoje/dodaj", reservation_views.RoomCreateView.as_view(), name="room_create"),
-
 
 
 # ======================================= CONTRACT_DETAIl_VIEW =========================================================

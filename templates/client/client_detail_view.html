@@ -3,6 +3,7 @@
 {% block content %}
 <div class="mt-2 col-md-12 row">
     <div class="col-xs-12">
+    ID: <br>
     Klient: <br>
     Data urodzenia: <br>
     Adres e-mail: <br>
@@ -13,6 +14,7 @@
     Lider: <br>
     </div>
     <div class="col-xs-12 ml-5">
+        {{ object.id }} <br>
         {{ object.last_name}} {{ object.first_name }}<br>
         {{ object.date_of_birth|date:"Y-m-d" }}<br>
         {{ object.email }}<br>
@@ -20,7 +22,11 @@
         {{ object.postcode }} {{ object.city }}<br>
         {{ object.address }}<br>
         {{ object.reference }}<br>
-        {{ object.leader }}<br>
+        {% if object.leader == True %}
+            TAK <br>
+        {% else %}
+            NIE <br>
+        {% endif %}
     </div>
 </div>
 <div class="mt-4">

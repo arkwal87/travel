@@ -22,4 +22,5 @@ $(document).ready(function() {
     $('#productsTable').DataTable(tableKwargs(0,"asc"));
     $('#contractsTable').DataTable(tableKwargs(0,"asc"));
     $('#villasTable').DataTable(tableKwargs(0,"asc"));
+    $('#trainsTable').DataTable(tableKwargs(0,"asc"));
 })

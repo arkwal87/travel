@@ -3,14 +3,16 @@
 {% block content %}
 <div class="mt-2 col-md-12 row">
     <div class="col-xs-12">
-    Klient: <br>
-    Data urodzenia: <br>
-    Adres e-mail: <br>
-    Numer telefonu: <br>
-    Referencje: <br>
-    Lider: <br>
+    ID: <br>
+    Nazwa: <br>
+    VAT: <br>
+    Kraj: <br>
+    Kod pocztowy: <br>
+    Miasto: <br>
+    Adres: <br>
     </div>
     <div class="col-xs-12 ml-5">
+        {{ object.id }}<br>
         {{ object.short_name}} - {{ object.full_name }}<br>
         {{ object.VAT_no }}<br>
         {{ object.country }}<br>

@@ -1,14 +1,10 @@
 <div class="mt-4">
-    <a href="/reservation/{{ object.id }}/zakwaterowanie" class="btn btn-info active" role="button" aria-pressed="true">Dodaj pokój</a>
-    <a href="{{ object.get_delete_url}}" class="btn btn-info active" role="button" aria-pressed="true">Usuń</a>
-    <a href="{{ object.id }}/umowa" class="btn btn-info active" role="button" aria-pressed="true">Twórz umowę</a>
-</div>
-<div class="mt-4">
 <table class="table table-striped" id="detailTable" >
   <thead>
     <tr>
       <th scope="col">Hotel</th>
       <th scope="col">Pokój</th>
+      <th scope="col">Wyżywienie</th>
       <th scope="col">Data od</th>
       <th scope="col">Data do</th>
       <th scope="col">Kontrahent</th>
@@ -16,17 +12,25 @@
     </tr>
   </thead>
   <tbody>
-  {% for room in object.contractroom_set.all %}
+  {% for room_reservation in object.contractroom_set.all %}
   <tr>
-    <td>{{ room.room.hotel.name }}</td>
-    <td>{{ room.room.name }}</td>
-    <td>{{ room.date_from}}</td>
-    <td>{{ room.date_to}}</td>
-    <td>{{ room.counterparty }}</td>
+    <td>{{ room_reservation.room.hotel.name }}</td>
+    <td>{{ room_reservation.room.name }}</td>
+    <td>{{ room_reservation.meal_plan.short_name }}</td>
+    <td>{{ room_reservation.date_from|date:"Y-m-d"}}</td>
+    <td>{{ room_reservation.date_to|date:"Y-m-d"}}</td>
+    <td>{{ room_reservation.counterparty }}</td>
     <td>
-        <a href="{{ room.get_delete_url }}" class="btn btn-secondary active btn-sm " role="button" aria-pressed="true">usuń</a>
-        <a href="{{ room.get_update_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">edytuj</a>
-        <a href="{{ room.get_detail_url }}" class="btn btn-secondary active btn-sm" role="button" aria-pressed="true">szczegóły</a>
+        <a href="{% url 'contract_room_delete' id=object.id pk=room_reservation.id %}"
+           class="btn btn-secondary active btn-sm"
+           role="button"
+           aria-pressed="true">usun
+        </a>
+        <a href="{% url 'contract_room_update' id=object.id pk=room_reservation.id %}"
+           class="btn btn-secondary active btn-sm "
+           role="button"
+           aria-pressed="true">edytuj
+        </a>
     </td>
   </tr>
   {% endfor %}

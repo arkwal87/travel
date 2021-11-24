@@ -3,27 +3,24 @@
 {% block content %}
 <div class="mt-2 col-md-12 row">
   <div class="col-xs-12">
+  ID: <br>
   Villa: <br>
   Kontynent: <br>
   Kraj: <br>
   Region: <br>
   Powierzchnia: <br>
   Liczba pokoi: <br>
-  Basen: <br>
   Link: <br>
   </div>
   <div class="col-xs-12 ml-5">
+    {{ object.id }}<br>
     {{ object.name }}<br>
     {{ object.region.country.continent }}<br>
     {{ object.region.country }}<br>
     {{ object.region}}<br>
     {{ object.size|safe }} m<sup>2</sup><br>
     {{ object.rooms_no }}<br>
-    {% if object.pool is True %}
-        TAK<br>
-    {% else %}
-        NIE<br>
-    {% endif %}
+    <a href="http://{{ object.link }}">{{ object.link }}</a><br>
   </div>
 </div>
 <div class="mt-4">

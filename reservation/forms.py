@@ -3,14 +3,14 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse_lazy
 
 from reservation.models import Room, Hotel, Client, Counterparty, ContractRoom, Contract, \
-    Villa, ContractVilla
+    Villa, ContractVilla, ContractTrain
 
 
 class ClientCreateForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ["first_name", "last_name", "date_of_birth", "phone_number", "email", "city", "postcode", "address",
-                  "reference", "leader"]
+                  "reference"]
         labels = {
             "first_name": "Imię",
             "last_name": "Nazwisko",
@@ -21,16 +21,16 @@ class ClientCreateForm(forms.ModelForm):
             "postcode": "Kod pocztowy",
             "address": "Ulica",
             "reference": "Referencje",
-            "leader": "Lider",
         }
 
 
 class HotelCreateForm(forms.ModelForm):
     class Meta:
         model = Hotel
-        fields = ["region", "name", "link"]
+        fields = ["region", "name", "link", "category"]
         labels = {
             'name': 'Nazwa',
+            'category': 'Kategoria'
         }
 
 
@@ -70,13 +70,19 @@ class ContractVillaCreateForm(forms.ModelForm):
         widgets = {'contract': forms.HiddenInput}
 
 
+class ContractTrainCreateForm(forms.ModelForm):
+    class Meta:
+        model = ContractTrain
+        fields = "__all__"
+        widgets = {'contract': forms.HiddenInput}
+
+
 class VillaCreateForm(forms.ModelForm):
     class Meta:
         model = Villa
-        fields = ["region", "name", "size", "rooms_no", "pool", "link"]
+        fields = ["region", "name", "size", "rooms_no", "link"]
         labels = {
             'name': 'Nazwa',
             'size': 'Powierzchnia [m2]',
             'rooms_no': 'Liczba pokoi',
-            'pool': 'Basen'
         }

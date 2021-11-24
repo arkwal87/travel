@@ -3,10 +3,11 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="container ml-5" style="width: 500px">
-        <form method="post">
-            {{ info }}
-            {% csrf_token %}
-            <table>
+      <form method="post">
+        {{ info }}
+        {% csrf_token %}
+        <table>
+            {% if continents %}
               <div id="div_id_continent" class="form-group">
                 <label for="id_cotinent" class> Kontynent </label>
                 <div class>
@@ -40,21 +41,24 @@
                   </select>
                 </div>
               </div>
-              <div id="div_id_hotel" class="form-group">
-                <label for="id_hotel" class> Hotel </label>
-                <div class>
-                  <select name="hotel" class="select form-control" id="id_hotel">
-                    <option value="" selected="">---------</option>
-                    {% for hotel in hotels %}
-                      <option value="{{ hotel.id }}">{{ hotel.name }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-              {{ form|crispy }}
-            </table>
-            <input type="submit" value="Dodaj" class="btn btn-info active">
-        </form>
+              {% if hotels %}
+                  <div id="div_id_hotel" class="form-group">
+                    <label for="id_hotel" class> Hotel </label>
+                    <div class>
+                      <select name="hotel" class="select form-control" id="id_hotel">
+                        <option value="" selected="">---------</option>
+                        {% for hotel in hotels %}
+                          <option value="{{ hotel.id }}">{{ hotel.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+              {% endif %}
+            {% endif %}
+        {{ form|crispy }}
+        </table>
+        <input type="submit" value="Dodaj" class="btn btn-info active">
+      </form>
     </div>
-    <script src={% static "js/app.js"%}></script>
+  <script src={% static "js/app.js"%}></script>
 {% endblock %}

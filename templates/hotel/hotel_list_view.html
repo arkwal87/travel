@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="mt-4">
-    <a href="{% url 'hotel_create' %}" class="btn btn-secondary" role="button" aria-pressed="true">Dodaj nowy hotel</a>
+    <a href="{% url 'hotel_create' %}" class="btn btn-info active" role="button" aria-pressed="true">Dodaj nowy hotel</a>
 </div>
 <div class="mt-4">
 <table class="table table-striped" id="listTable">
@@ -19,6 +19,9 @@
     <tr>
         <td>
             {{ object.name }}
+        </td>
+        <td>
+            {{ object.category }}
         </td>
         <td>
             {{ object.region.country.continent }}

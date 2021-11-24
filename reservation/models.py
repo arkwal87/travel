@@ -1,5 +1,11 @@
 from django.db import models
+from django.db.models import Sum
 from django.core.validators import MinValueValidator
+
+
+class Airline(models.Model):
+    name = models.CharField(max_length=32)
+    link = models.CharField(max_length=128, default="", blank=True, null=True)
 
 
 class MealPlan(models.Model):
@@ -83,7 +89,6 @@ class Client(models.Model):
     city = models.CharField(max_length=32, null=True)
     postcode = models.CharField(max_length=6, null=True)
     address = models.TextField(null=True)
-    leader = models.BooleanField(default=False)
     reference = models.ForeignKey(Reference, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
@@ -98,14 +103,23 @@ class Client(models.Model):
     def get_delete_url(self):
         return f"/reservation/klienci/{self.pk}/usun"
 
-    # def get_create_url(self):
-    #     return "/reservation/klienci/dodaj"
-
 
 class Hotel(models.Model):
     name = models.CharField(max_length=32)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, blank=True, null=True)
     link = models.CharField(max_length=128, default="", blank=True, null=True)
+    category = models.CharField(
+        choices=[
+            ('-', "-"),
+            ('*', "*"),
+            ('**', "**"),
+            ('***', "***"),
+            ('****', "****"),
+            ('*****', "*****")],
+        default="*",
+        max_length=5)
+
+    # category = models.CharField(max_length=32)
 
     def __str__(self):
         return f'{self.name} - {self.region}'
@@ -122,8 +136,6 @@ class Hotel(models.Model):
 
 class Room(models.Model):
     name = models.CharField(max_length=32)
-    # price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    # currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     hotel = models.ForeignKey(Hotel, on_delete=models.SET_NULL, null=True)
     room_size = models.IntegerField(null=True)
     terrace_size = models.IntegerField(null=True)
@@ -147,7 +159,6 @@ class Villa(models.Model):
     link = models.CharField(max_length=128, default="", blank=True, null=True)
     size = models.IntegerField(null=True)
     rooms_no = models.IntegerField(null=True)
-    pool = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.name} - {self.region}'
@@ -162,11 +173,36 @@ class Villa(models.Model):
         return f"/reservation/wille/{self.pk}/usun"
 
 
-class RoomCategory(models.Model):
+class Train(models.Model):
     name = models.CharField(max_length=32)
+    dest_from = models.CharField(max_length=128, default="", blank=True, null=True)
+    dest_to = models.CharField(max_length=128, default="", blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
+
+    def get_detail_url(self):
+        return f"/reservation/pociagi/{self.pk}"
+
+    def get_update_url(self):
+        return f"/reservation/pociagi/{self.pk}/edytuj"
+
+    def get_delete_url(self):
+        return f"/reservation/pociagi/{self.pk}/usun"
+
+
+#
+#
+# class OtherProducts(models.Model):
+#     name = models.CharField(max_length=32)
+#     descirption = models.CharField(max=1024)
+
+#
+# class RoomCategory(models.Model):
+#     name = models.CharField(max_length=32)
+#
+#     def __str__(self):
+#         return self.name
 
 
 class Message(models.Model):
@@ -178,6 +214,7 @@ class Contract(models.Model):
     date_of_contract = models.DateField()
     client = models.ManyToManyField(Client)
     owner = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contract_owner")
+    leader = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contract_leader")
 
     def __str__(self):
         return str(self.id)
@@ -193,10 +230,22 @@ class Contract(models.Model):
 
     @property
     def get_dates(self):
+        dates_from = []
+        dates_to = []
         if ContractRoom.objects.filter(contract=self).exists():
-            date_from = ContractRoom.objects.filter(contract=self).order_by("date_from").first().date_from
-            date_to = ContractRoom.objects.filter(contract=self).order_by("date_to").last().date_to
-            return [date_from, date_to]
+            dates_from.append(ContractRoom.objects.filter(contract=self).order_by("date_from").first().date_from)
+            dates_to.append(ContractRoom.objects.filter(contract=self).order_by("date_to").last().date_to)
+        if ContractVilla.objects.filter(contract=self).exists():
+            dates_from.append(ContractVilla.objects.filter(contract=self).order_by("date_from").first().date_from)
+            dates_to.append(ContractVilla.objects.filter(contract=self).order_by("date_to").last().date_to)
+        if not dates_from:
+            dates_from = [0]
+        if not dates_to:
+            dates_to = [0]
+        return [min(dates_from), max(dates_to)]
+
+    def get_price_offer(self):
+        return ContractRoom.objects.filter(contract=self).aggregate(Sum("price_offer"))['price_offer__sum']
 
 
 class ContractRoom(models.Model):
@@ -204,7 +253,6 @@ class ContractRoom(models.Model):
     date_from = models.DateField()
     date_to = models.DateField()
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
-    # room_category = models.ForeignKey(RoomCategory, on_delete=models.CASCADE)
     room_number = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     price_offer = models.DecimalField(max_digits=10, decimal_places=2)
     price_net = models.DecimalField(max_digits=10, decimal_places=2)
@@ -224,3 +272,75 @@ class ContractVilla(models.Model):
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_villa_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_villa_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
+    meal_plan = models.ForeignKey(MealPlan, on_delete=models.CASCADE)
+
+
+class ContractTrain(models.Model):
+    train = models.ForeignKey(Train, on_delete=models.SET_NULL, null=True)
+    cabin_category = models.CharField(max_length=32)
+    date_from = models.DateField()
+    date_to = models.DateField()
+    contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
+    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_train_currency")
+    net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_train_currency")
+    counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
+    meal_plan = models.ForeignKey(MealPlan, on_delete=models.CASCADE)
+
+
+class ContractProduct(models.Model):
+    name = models.CharField(max_length=32)
+    description = models.CharField(max_length=256)
+    date_from = models.DateField()
+    date_to = models.DateField()
+    contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
+    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_product_currency")
+    net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_product_currency")
+    counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
+
+
+class ContractTicket(models.Model):
+    name = models.CharField(max_length=32)
+    date_from = models.DateField()
+    date_to = models.DateField()
+    departure = models.DateField()
+    arrival = models.DateField()
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
+    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_ticket_currency")
+    net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_ticket_currency")
+    counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
+    airline = models.ForeignKey(Airline, on_delete=models.CASCADE)
+    flight_class = models.CharField(max_length=32)
+    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+
+
+class ContractInsurance(models.Model):
+    type = models.CharField(choices=[(1, "Podróżne"),(2, "Kosztów rezygnacji")], default=1, max_length=5)
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
+    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_insurance_currency")
+    net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_insurance_currency")
+    counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
+
+
+# class ContractTest(models.Model):
+#     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
+#     villa = models.ForeignKey(Villa, on_delete=models.SET_NULL, null=True)
+#     date_from = models.DateField()
+#     date_to = models.DateField()
+#     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=False)
+#     price_offer = models.DecimalField(max_digits=10, decimal_places=2)
+#     price_net = models.DecimalField(max_digits=10, decimal_places=2)
+#     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_room_currency")
+#     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_room_currency")
+#     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE, null=False)
+#     meal_plan = models.ForeignKey(MealPlan, on_delete=models.CASCADE, null=True)
+#     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], null=True)
+#     airline = models.ForeignKey(Airline, on_delete=models.CASCADE, null=True)
+#     flight_class = models.CharField(max_length=32, null=True)
+#     description = models.CharField(max_length=256, null=True)
+#     cabin_category = models.CharField(max_length=32, null=True)

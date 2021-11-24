@@ -6,6 +6,7 @@ let my_countries = document.querySelector('#id_country')
 let my_regions = document.querySelector('#id_region')
 let my_hotels = document.querySelector('#id_hotel')
 let my_rooms = document.querySelector('#id_room')
+let my_villas = document.querySelector('#id_villa')
 
     if (my_countries) {
         my_continents.addEventListener("click", function () {
@@ -46,7 +47,7 @@ let my_rooms = document.querySelector('#id_room')
         my_regions.addEventListener("click", function (){
             let my_val = my_regions.options[my_regions.selectedIndex]
             const ADDRESS='http://127.0.0.1:8000/reservation/rest/get_hotels/?region_id=' + my_val.value
-            console.log(ADDRESS)
+            // console.log(ADDRESS)
             fetch(`${ADDRESS}`, {method:"GET"}).then(response=>{
             //Promise
             if(response.status===200){  //response.isOk
@@ -75,6 +76,25 @@ let my_rooms = document.querySelector('#id_room')
                 // console.log(html)
             }).catch(err => {
                 alert(err)
+            })
+        })
+    }
+
+    if (my_villas) {
+        my_regions.addEventListener("click", function (){
+            let my_val = my_regions.options[my_regions.selectedIndex]
+            const ADDRESS='http://127.0.0.1:8000/reservation/rest/get_villas/?region_id=' + my_val.value
+            // console.log(ADDRESS)
+            fetch(`${ADDRESS}`, {method:"GET"}).then(response=>{
+            //Promise
+            if(response.status===200){  //response.isOk
+                return response.text()
+            }
+            }).then(html=>{
+                my_villas.innerHTML = html
+                // console.log(html)
+            }).catch(err=>{
+            alert(err)
             })
         })
     }
