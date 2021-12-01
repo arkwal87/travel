@@ -3,11 +3,6 @@ from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
 
-class Airline(models.Model):
-    name = models.CharField(max_length=32)
-    link = models.CharField(max_length=128, default="", blank=True, null=True)
-
-
 class MealPlan(models.Model):
     name = models.CharField(max_length=32)
     short_name = models.CharField(max_length=10)
@@ -204,6 +199,24 @@ class Train(models.Model):
 #     def __str__(self):
 #         return self.name
 
+class Airline(models.Model):
+    name = models.CharField(max_length=32)
+    link = models.CharField(max_length=128, default="", blank=True, null=True)
+
+
+class Airport(models.Model):
+    name = models.CharField(max_length=32)
+    city = models.CharField(max_length=32)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL)
+    short_name = models.CharField(max_length=8)
+
+
+class AirplaneRoutes(models.Model):
+    departure_airport = models.ForeignKey(Airport, on_delete=models.SET_NULL, related_name="dep_airport")
+    arrival_airport = models.ForeignKey(Airport, on_delete=models.SET_NULL, related_name="arr_dest")
+    departure_date = models.DateField()
+    arrival_date = models.DateField()
+
 
 class Message(models.Model):
     date_of_message = models.DateField(auto_now_add=True, blank=True)
@@ -304,10 +317,6 @@ class ContractProduct(models.Model):
 
 class ContractTicket(models.Model):
     name = models.CharField(max_length=32)
-    date_from = models.DateField()
-    date_to = models.DateField()
-    departure = models.DateField()
-    arrival = models.DateField()
     price_offer = models.DecimalField(max_digits=10, decimal_places=2)
     price_net = models.DecimalField(max_digits=10, decimal_places=2)
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_ticket_currency")
@@ -318,14 +327,14 @@ class ContractTicket(models.Model):
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
 
+
 class ContractInsurance(models.Model):
-    type = models.CharField(choices=[(1, "Podróżne"),(2, "Kosztów rezygnacji")], default=1, max_length=5)
+    type = models.CharField(choices=[(1, "Podróżne"), (2, "Kosztów rezygnacji")], default=1, max_length=5)
     price_offer = models.DecimalField(max_digits=10, decimal_places=2)
     price_net = models.DecimalField(max_digits=10, decimal_places=2)
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_insurance_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_insurance_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
-
 
 # class ContractTest(models.Model):
 #     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
