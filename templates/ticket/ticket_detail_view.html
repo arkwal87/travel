@@ -1,0 +1,64 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+<div class="mt-2 col-md-12 row">
+  <div class="col-xs-12">
+      ID: <br>
+      Kierunek: <br>
+      Klasa: <br>
+      Linia: <br>
+      Wylot: <br>
+      Przylot: <br>
+      Cena: <br>
+      Cena offerty: <br>
+      Kontrahent: <br>
+      Notatki: <br>
+  </div>
+  <div class="col-xs-12 ml-5">
+    {{ object.id }}<br>
+    {{ object.ticket }}<br>
+    {{ object.get_ticket_class_display }}<br>
+    {{ object.airline }}<br>
+    {{ object.date_departure|date:"Y-m-d G:i" }}<br>
+    {{ object.date_arrival|date:"Y-m-d G:i" }}<br>
+    {{ object.price_net }} {{ object.net_currency }}<br>
+    {{ object.price_offer }} {{ object.offer_currency }}<br>
+    {{ object.counterparty }}<br>
+    {{ object.extra_notes }}<br>
+  </div>
+</div>
+{#<div class="mt-4">#}
+{#  <table class="table table-striped" id="trainsTable">#}
+{#    <thead>#}
+{#      <tr>#}
+{#        <th scope="col" style="width: 10%">Kontrakt</th>#}
+{#        <th scope="col">Data zawarcia</th>#}
+{#        <th scope="col">Właściciel</th>#}
+{#        <th scope="col">Data od</th>#}
+{#        <th scope="col">Data do</th>#}
+{#        <th scope="col">Pozostali uczestnicy</th>#}
+{#      </tr>#}
+{#    </thead>#}
+{#    <tbody>#}
+{#    {% for item in contract_list %}#}
+{#      <tr>#}
+{#        <td style="width: 10%"><a href="/reservation/umowy/{{ item.contract.id }}">{{ item.contract.id }}</a></td>#}
+{#        <td>{{ item.contract.date_of_contract }}</td>#}
+{#        <td><a href="/reservation/klienci/{{ item.contract.owner.id }}">{{ item.contract.owner }}</a></td>#}
+{#        <td>{{ item.contract.get_dates.0|date:"Y-m-d" }}</td>#}
+{#        <td>{{ item.contract.get_dates.1|date:"Y-m-d" }}</td>#}
+{#        <td>#}
+{#          {% for client in item.contract.client.all %}#}
+{#            {% if client != contract.owner %}#}
+{#              <a href="/reservation/klienci/{{ client.id }}">{{ client }}</a>#}
+{#            {% endif %}#}
+{#          {% endfor %}#}
+{#        </td>#}
+{#      </tr>#}
+{#    {% endfor %}#}
+{#    </tbody>#}
+{#  </table>#}
+{#</div>#}
+<script src={% static "js/tabs.js" %}></script>
+<script src={% static "js/app.js" %}></script>
+{% endblock %}

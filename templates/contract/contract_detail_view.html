@@ -45,35 +45,67 @@
        role="button"
        aria-pressed="true">Rezerwuj pociąg
     </a>
+    <a href="{% url 'contract_ticket_create' id=object.id %}"
+       class="btn btn-info active"
+       role="button"
+       aria-pressed="true">Dodaj bilet
+    </a>
+    <a href="{% url 'contract_insurance_create' id=object.id %}"
+       class="btn btn-info active"
+       role="button"
+       aria-pressed="true">Dodaj ubzepieczenie
+    </a>
+    <a href="{% url 'contract_other_create' id=object.id %}"
+       class="btn btn-info active"
+       role="button"
+       aria-pressed="true">Dodaj inną usługę
+    </a>
 </div>
 <div class="mt-4">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="tab-rooms" data-bs-toggle="tab" data-bs-target="#home" type="button"
+            <button class="nav-link active" id="tab-rooms" data-bs-toggle="tab" data-bs-target="#rooms" type="button"
                     role="tab" aria-controls="rooms" aria-selected="true">Pokoje</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-villas" data-bs-toggle="tab" data-bs-target="#contact" type="button"
+            <button class="nav-link" id="tab-villas" data-bs-toggle="tab" data-bs-target="#villas" type="button"
                     role="tab" aria-controls="villas" aria-selected="false">Wille</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-trains" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+            <button class="nav-link" id="tab-trains" data-bs-toggle="tab" data-bs-target="#trains" type="button"
                     role="tab" aria-controls="trains" aria-selected="false">Pociągi</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-others" data-bs-toggle="tab" data-bs-target="#contact" type="button"
+            <button class="nav-link" id="tab-tickets" data-bs-toggle="tab" data-bs-target="#tickets" type="button"
+                    role="tab" aria-controls="tickets" aria-selected="false">Bilety lotnicze</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-insurances" data-bs-toggle="tab" data-bs-target="#insurances" type="button"
+                    role="tab" aria-controls="insurances" aria-selected="false">Ubezpieczenia</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-others" data-bs-toggle="tab" data-bs-target="#others" type="button"
                     role="tab" aria-controls="others" aria-selected="false">Inne</button>
         </li>
     </ul>
     <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="rooms" role="tabpanel" aria-labelledby="home-tab">
+        <div class="tab-pane fade show active" id="rooms" role="tabpanel" aria-labelledby="rooms-tab">
             {% include "contract/rooms_tab.html" %}
         </div>
-        <div class="tab-pane fade" id="villas" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="tab-pane fade" id="villas" role="tabpanel" aria-labelledby="villas-tab">
             {% include "contract/villas_tab.html" %}
         </div>
-        <div class="tab-pane fade" id="trains" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="tab-pane fade" id="trains" role="tabpanel" aria-labelledby="trains-tab">
             {% include "contract/trains_tab.html" %}
+        </div>
+        <div class="tab-pane fade" id="tickets" role="tabpanel" aria-labelledby="tickets-tab">
+            {% include "contract/tickets_tab.html" %}
+        </div>
+        <div class="tab-pane fade" id="insurances" role="tabpanel" aria-labelledby="insurances-tab">
+            {% include "contract/insurances_tab.html" %}
+        </div>
+        <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">
+            {% include "contract/others_tab.html" %}
         </div>
         <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="contact-tab">dane inne</div>
     </div>

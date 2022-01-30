@@ -32,9 +32,6 @@ class Counterparty(models.Model):
     def get_delete_url(self):
         return f"/reservation/kontrahenci/{self.pk}/usun"
 
-    # def get_create_url(self):
-    #     return "/reservation/kontrahenci/dodaj"
-
 
 class Reference(models.Model):
     name = models.CharField(max_length=32)
@@ -114,8 +111,6 @@ class Hotel(models.Model):
         default="*",
         max_length=5)
 
-    # category = models.CharField(max_length=32)
-
     def __str__(self):
         return f'{self.name} - {self.region}'
 
@@ -169,9 +164,9 @@ class Villa(models.Model):
 
 
 class Train(models.Model):
-    name = models.CharField(max_length=32)
-    dest_from = models.CharField(max_length=128, default="", blank=True, null=True)
-    dest_to = models.CharField(max_length=128, default="", blank=True, null=True)
+    name = models.CharField(max_length=32, verbose_name='Nazwa')
+    dest_from = models.CharField(max_length=128, default="", blank=True, null=True, verbose_name='Miasto początkowe')
+    dest_to = models.CharField(max_length=128, default="", blank=True, null=True, verbose_name='Miasto docelowe')
 
     def __str__(self):
         return f'{self.name}'
@@ -186,34 +181,24 @@ class Train(models.Model):
         return f"/reservation/pociagi/{self.pk}/usun"
 
 
-#
-#
-# class OtherProducts(models.Model):
-#     name = models.CharField(max_length=32)
-#     descirption = models.CharField(max=1024)
-
-#
-# class RoomCategory(models.Model):
-#     name = models.CharField(max_length=32)
-#
-#     def __str__(self):
-#         return self.name
-
 class Airline(models.Model):
     name = models.CharField(max_length=32)
     link = models.CharField(max_length=128, default="", blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.name}'
 
 
 class Airport(models.Model):
     name = models.CharField(max_length=32)
     city = models.CharField(max_length=32)
-    country = models.ForeignKey(Country, on_delete=models.SET_NULL)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
     short_name = models.CharField(max_length=8)
 
 
 class AirplaneRoutes(models.Model):
-    departure_airport = models.ForeignKey(Airport, on_delete=models.SET_NULL, related_name="dep_airport")
-    arrival_airport = models.ForeignKey(Airport, on_delete=models.SET_NULL, related_name="arr_dest")
+    departure_airport = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="dep_airport")
+    arrival_airport = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="arr_dest")
     departure_date = models.DateField()
     arrival_date = models.DateField()
 
@@ -302,7 +287,7 @@ class ContractTrain(models.Model):
     meal_plan = models.ForeignKey(MealPlan, on_delete=models.CASCADE)
 
 
-class ContractProduct(models.Model):
+class ContractOther(models.Model):
     name = models.CharField(max_length=32)
     description = models.CharField(max_length=256)
     date_from = models.DateField()
@@ -315,26 +300,63 @@ class ContractProduct(models.Model):
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
 
 
-class ContractTicket(models.Model):
-    name = models.CharField(max_length=32)
-    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
-    price_net = models.DecimalField(max_digits=10, decimal_places=2)
-    offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_ticket_currency")
-    net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_ticket_currency")
-    counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
-    airline = models.ForeignKey(Airline, on_delete=models.CASCADE)
-    flight_class = models.CharField(max_length=32)
-    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
-
-
-
 class ContractInsurance(models.Model):
-    type = models.CharField(choices=[(1, "Podróżne"), (2, "Kosztów rezygnacji")], default=1, max_length=5)
+    type = models.IntegerField(choices=[(1, "Podróżne"), (2, "Kosztów rezygnacji")], default=1)
     price_offer = models.DecimalField(max_digits=10, decimal_places=2)
     price_net = models.DecimalField(max_digits=10, decimal_places=2)
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_insurance_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_insurance_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
+    contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
+
+
+class ContractTicket(models.Model):
+    ticket = models.CharField(max_length=256)
+    ticket_class = models.IntegerField(choices=[(1, "Ekonomiczna"), (2, "Biznesowa"), (3, "Pierwsza")], default=1)
+    airline = models.ForeignKey(Airline, on_delete=models.SET_NULL, null=True)
+    date_departure = models.DateTimeField()
+    date_arrival = models.DateTimeField()
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
+    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_ticket_currency")
+    net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_ticket_currency")
+    counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
+    contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
+    extra_notes = models.CharField(max_length=12800, null=True)
+
+# class Ticket(models.Model):
+#     kierunek = models.ForeignKey(AirplaneRoutes, on_delete=models.SET_NULL, null=True)
+#     klasa = models.CharField(max_length=32)
+#     airline = models.ForeignKey(Airline, on_delete=models.SET_NULL, null=True)
+#     pasazer = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
+#     price_offer = models.DecimalField(max_digits=10, decimal_places=2)
+#     price_net = models.DecimalField(max_digits=10, decimal_places=2)
+#     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_ticket")
+#     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_ticket")
+#
+#
+# class ContractAirplaneRoutes(models.Model):
+#     trasa = models.ForeignKey(AirplaneRoutes, on_delete=models.SET_NULL, null=True)
+#
+#
+# class ContractTicketOLD2(models.Model):
+#     bilet = models.ForeignKey(Ticket, on_delete=models.SET_NULL, null=True)
+#     trasy = models.ForeignKey(ContractAirplaneRoutes, on_delete=models.SET_NULL, null=True)
+#     price = models.DecimalField(max_digits=10, decimal_places=2)
+#
+#
+# class ContractTicketOLD(models.Model):
+#     name = models.CharField(max_length=32)
+#     price_offer = models.DecimalField(max_digits=10, decimal_places=2)
+#     price_net = models.DecimalField(max_digits=10, decimal_places=2)
+#     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_ticket_currency")
+#     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_ticket_currency")
+#     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
+#     # airline = models.ForeignKey(Airline, on_delete=models.CASCADE)
+#     # flight_class = models.CharField(max_length=32)
+#     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+#     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
+
 
 # class ContractTest(models.Model):
 #     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)

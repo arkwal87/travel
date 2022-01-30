@@ -1,0 +1,16 @@
+{% extends "index.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container ml-5" style="width: 500px">
+        <form method="post">
+            {{ info }}
+            {% csrf_token %}
+            <table>
+              {{ form|crispy }}
+            </table>
+            <input type="submit" value="Dodaj" class="btn btn-info active">
+        </form>
+    </div>
+    <script src={% static "js/app.js"%}></script>
+{% endblock %}

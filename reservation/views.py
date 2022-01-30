@@ -14,10 +14,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from reservation.models import Client, Hotel, Room, Country, Continent, Region, Counterparty, Contract, MealPlan, \
-    Reference, Currency, ContractRoom, Villa, ContractVilla, Airline, ContractTrain
+    Reference, Currency, ContractRoom, Villa, ContractVilla, Airline, ContractTrain, Train, ContractInsurance, \
+    ContractTicket, ContractOther
 from reservation.forms import RoomCreateForm, HotelCreateForm, ClientCreateForm, CounterpartyCreateForm, \
     VillaCreateForm, \
-    ContractRoomCreateForm, ContractVillaCreateForm, ContractTrainCreateForm
+    ContractRoomCreateForm, ContractVillaCreateForm, ContractTrainCreateForm, ContractInsuranceCreateForm, \
+    ContractTicketCreateForm, ContractOtherCreateForm
 
 
 # ================================== CLIENTS VIEWS =====================================================================
@@ -414,6 +416,43 @@ class VillaUpdateView(LoginRequiredMixin, UpdateView):
 #         return get_object_or_404(Hotel, id=id_)
 
 
+# ==================================================== TRAIN VIEWS =====================================================
+
+
+class TrainListView(LoginRequiredMixin, ListView):
+    model = Train
+    columns = ["Nazwa", "Miasto początkowe", "Miasto docelowe"]
+    template_name = "train/train_list_view.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TrainListView, self).get_context_data(**kwargs)
+        context['columns'] = self.columns
+        return context
+
+
+class TrainDetailView(LoginRequiredMixin, DetailView):
+    model = Train
+    template_name = "train/train_detail_view.html"
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Train, id=id_)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        contract_list = ContractTrain.objects.filter(train=get_object_or_404(Train, id=self.kwargs.get("id"))).distinct(
+            "contract_id")
+        context.update({"contract_list": contract_list})
+        return context
+
+
+class TrainCreateView(LoginRequiredMixin, CreateView):
+    model = Train
+    fields = '__all__'
+    success_url = reverse_lazy("train_list")
+    template_name = "train/train_create_view.html"
+
+
 # ========================================= CONTRACTS DETAIL VIEWS =====================================================
 
 class ContractRoomCreateView(LoginRequiredMixin, CreateView):
@@ -548,6 +587,135 @@ class ContractTrainDeleteView(LoginRequiredMixin, DeleteView):
         return get_object_or_404(ContractTrain, pk=id_)
 
 
+class ContractInsuranceCreateView(LoginRequiredMixin, CreateView):
+    form_class = ContractInsuranceCreateForm
+    template_name = "contract/contract_prod_create_view.html"
+    success_url = reverse_lazy("contract_insurance_create")
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+    def get_initial(self):
+        return {'contract': get_object_or_404(Contract, id=self.kwargs.get("id"))}
+
+
+class ContractInsuranceUpdateView(LoginRequiredMixin, UpdateView):
+    model = ContractInsurance
+    fields = "__all__"
+    template_name = "update_view.html"
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("pk")
+        return get_object_or_404(ContractInsurance, pk=id_)
+
+
+class ContractInsuranceDeleteView(LoginRequiredMixin, DeleteView):
+    model = ContractInsurance
+    template_name = "delete_view.html"
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("pk")
+        return get_object_or_404(ContractInsurance, pk=id_)
+
+
+class ContractTicketCreateView(LoginRequiredMixin, CreateView):
+    form_class = ContractTicketCreateForm
+    template_name = "contract/contract_prod_create_view.html"
+    success_url = reverse_lazy("contract_ticket_create")
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+    def get_initial(self):
+        return {'contract': get_object_or_404(Contract, id=self.kwargs.get("id"))}
+
+
+class ContractTicketUpdateView(LoginRequiredMixin, UpdateView):
+    model = ContractTicket
+    fields = "__all__"
+    template_name = "update_view.html"
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("pk")
+        return get_object_or_404(ContractTicket, pk=id_)
+
+
+class ContractTicketDeleteView(LoginRequiredMixin, DeleteView):
+    model = ContractTicket
+    template_name = "delete_view.html"
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("pk")
+        return get_object_or_404(ContractTicket, pk=id_)
+
+
+class ContractTicketDetailView(LoginRequiredMixin, DetailView):
+    model = ContractTicket
+    template_name = "ticket/ticket_detail_view.html"
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(ContractTicket, id=id_)
+
+
+class ContractOtherCreateView(LoginRequiredMixin, CreateView):
+    form_class = ContractOtherCreateForm
+    template_name = "contract/contract_prod_create_view.html"
+    success_url = reverse_lazy("contract_other_create")
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+    def get_initial(self):
+        return {'contract': get_object_or_404(Contract, id=self.kwargs.get("id"))}
+
+
+class ContractOtherUpdateView(LoginRequiredMixin, UpdateView):
+    model = ContractOther
+    fields = "__all__"
+    template_name = "update_view.html"
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("pk")
+        return get_object_or_404(ContractOther, pk=id_)
+
+
+class ContractOtherDeleteView(LoginRequiredMixin, DeleteView):
+    model = ContractOther
+    template_name = "delete_view.html"
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("pk")
+        return get_object_or_404(ContractOther, pk=id_)
+
+
+class ContractOtherDetailView(LoginRequiredMixin, DetailView):
+    model = ContractOther
+    template_name = "other/other_detail_view.html"
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(ContractOther, id=id_)
+
+
 # ==================================== EXTRA FUNCTIONS =================================================================
 
 
@@ -678,3 +846,4 @@ def populate_db(request):
                     cursor.execute(sql)
 
     return render(request, "test_view.html", {'tab_names': tab_names})
+

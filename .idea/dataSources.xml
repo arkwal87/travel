@@ -9,5 +9,12 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://127.0.0.1:5432/instyle</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="PostgreSQL - instyle@localhost" uuid="25b367b6-4136-4e4e-8759-3f922d6819f7">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/instyle</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

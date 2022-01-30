@@ -23,4 +23,7 @@ $(document).ready(function() {
     $('#contractsTable').DataTable(tableKwargs(0,"asc"));
     $('#villasTable').DataTable(tableKwargs(0,"asc"));
     $('#trainsTable').DataTable(tableKwargs(0,"asc"));
+    $('#insurancesTable').DataTable(tableKwargs(0,"asc"));
+    $('#ticketsTable').DataTable(tableKwargs(0,"asc"));
+    $('#othersTable').DataTable(tableKwargs(0,"asc"));
 })

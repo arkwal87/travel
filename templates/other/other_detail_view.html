@@ -1,0 +1,29 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+<div class="mt-2 col-md-12 row">
+  <div class="col-xs-12">
+  ID: <br>
+  Usługa: <br>
+  Od: <br>
+  Do: <br>
+  Cena offer: <br>
+  Cena net: <br>
+  Kontrahent: <br>
+  Opis: <br>
+  </div>
+  <div class="col-xs-12 ml-5">
+    {{ object.id }}<br>
+    {{ object.name }}<br>
+    {{ object.date_from|date:"Y-m-d" }}<br>
+    {{ object.date_to|date:"Y-m-d" }}<br>
+    {{ object.price_offer }} {{ object.offer_currency }}<br>
+    {{ object.price_net }} {{ object.net_currency }}<br>
+    {{ object.counterparty }}<br>
+    {{ object.description }}<br>
+    <a href="http://{{ object.link }}">{{ object.link }}</a><br>
+  </div>
+</div>
+<script src={% static "js/tabs.js" %}></script>
+<script src={% static "js/app.js" %}></script>
+{% endblock %}
