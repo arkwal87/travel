@@ -4,6 +4,7 @@
     <tr>
       <th scope="col">Usługa</th>
       <th scope="col">Kontrahent</th>
+      <th scope="col">Cena offer</th>
       <th scope="col">Operacje</th>
     </tr>
   </thead>
@@ -12,6 +13,7 @@
   <tr>
     <td>{{ other_reservation.name }}</td>
     <td>{{ other_reservation.counterparty }}</td>
+    <td>{{ other_reservation.price_offer }}</td>
     <td>
         <a href="{% url 'contract_other_details' id=object.id pk=other_reservation.id %}"
            class="btn btn-secondary active btn-sm"

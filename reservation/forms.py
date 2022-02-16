@@ -57,6 +57,7 @@ LABELS = {
     "cancellation_deadline": "Data anulowania",
     "cancellation_policy": "Polityka rezygnacji",
     "payment_policy": "Polityka płatności",
+    "quantity": "Ilość"
 }
 
 
@@ -164,8 +165,8 @@ class ContractTicketCreateForm(forms.ModelForm):
         labels = LABELS
         widgets = {
             'contract': forms.HiddenInput,
-            'date_departure': DateTimeInput(),
-            'date_arrival': DateTimeInput()
+            'date_departure': DateInput(),
+            'date_arrival': DateInput()
         }
 
 

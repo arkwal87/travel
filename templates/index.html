@@ -112,14 +112,14 @@
             {% endif %}
             <br>
             {% if birthday_list.1|length != 0%}
-                Za tydzień urodziny obchodzi:<br>
+                W ciągu najbliższego tygodnia urodziny obchodzą:<br>
                 {% for client in birthday_list.1 %}
                     <a href="/reservation/klienci/{{ client.id }}">{{ client }}<br></a>
                 {% endfor %}
             {% endif %}
             <br>
             {% if birthday_list.2|length != 0%}
-                Za 3 tygodnie urodziny obchodzi:<br>
+                W ciągu najbliższych 3 tygodni urodziny obchodzą:<br>
                 {% for client in birthday_list.2 %}
                     <a href="/reservation/klienci/{{ client.id }}">{{ client }}<br></a>
                 {% endfor %}
@@ -148,7 +148,6 @@
   <!-- DataTables -->
   <script type="text/javascript" charset="utf8" src={% static "/DataTables/datatables.js" %}></script>
   <script type="text/javascript" charset="utf8" src={% static "/DataTables/datatables_app.js" %}></script>
-  <script type="text/javascript" charset="utf8" src={% static "/toPDF.js" %}></script>
 
 </body>
 

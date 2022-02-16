@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
-
+import os.path
+import os
 import openpyxl
+import mimetypes
 
 from django.core.management.color import no_style
 from django.db import connection
 
 from datetime import date, datetime, timedelta
 
+from wsgiref.util import FileWrapper
+from django.http import StreamingHttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, View, DeleteView, UpdateView, TemplateView, ListView
@@ -32,13 +36,12 @@ class MyTemplateView(TemplateView):
         check_date = date.today()
         birthday_list = [[], [], []]
         for client in Client.objects.all():
-            if check_date.month == client.date_of_birth.month and check_date.day == client.date_of_birth.day:
+            birthday_date = client.date_of_birth.replace(year=check_date.year)
+            if birthday_date == check_date:
                 birthday_list[0].append(client)
-            elif (check_date + timedelta(days=7)).month == client.date_of_birth.month and \
-                    (check_date + timedelta(days=7)).day == client.date_of_birth.day:
+            elif check_date < birthday_date < (check_date + timedelta(days=8)):
                 birthday_list[1].append(client)
-            elif (check_date + timedelta(days=21)).month == client.date_of_birth.month and \
-                    (check_date + timedelta(days=21)).day == client.date_of_birth.day:
+            elif (check_date + timedelta(days=7)) < birthday_date < (check_date + timedelta(days=22)):
                 birthday_list[2].append(client)
         return birthday_list
 
@@ -130,6 +133,7 @@ class HotelCreateView(LoginRequiredMixin, CreateView):
 class HotelDetailView(LoginRequiredMixin, DetailView):
     model = Hotel
     template_name = "hotel/hotel_detail_view.html"
+
     columns = ["#", "Nazwa", "Kontynent", "Kraj", "Region", "Link"]
     columns_room = ["#", "Nazwa", "Cena", "Waluta", "Wielkość pokoju", "Wielkość tarasu", "Operacje"]
 
@@ -144,10 +148,14 @@ class HotelDetailView(LoginRequiredMixin, DetailView):
 
 
 class HotelUpdateView(LoginRequiredMixin, UpdateView):
-    model = Hotel
-    fields = "__all__"
-    template_name = "update_view.html"
+    # model = Hotel
+    # fields = "__all__"
+    # template_name = "update_view.html"
+    # success_url = reverse_lazy("hotel_list")
+
+    form_class = HotelCreateForm
     success_url = reverse_lazy("hotel_list")
+    template_name = "update_view.html"
 
     def get_object(self, **kwargs):
         id_ = self.kwargs.get("id")
@@ -205,8 +213,9 @@ class RoomDetailView(LoginRequiredMixin, DetailView):
 
 
 class RoomUpdateView(LoginRequiredMixin, UpdateView):
-    model = Room
-    fields = "__all__"
+    # model = Room
+    form_class = RoomCreateForm
+    # fields = "__all__"
     template_name = "update_view.html"
     success_url = reverse_lazy("room_list")
 
@@ -270,10 +279,14 @@ class CounterpartyDetailView(LoginRequiredMixin, DetailView):
 
 
 class CounterpartyUpdateView(LoginRequiredMixin, UpdateView):
-    model = Counterparty
-    fields = "__all__"
-    template_name = "update_view.html"
+    # model = Counterparty
+    # fields = "__all__"
+    # template_name = "update_view.html"
+    # success_url = reverse_lazy("counterparty_list")
+
+    form_class = CounterpartyCreateForm
     success_url = reverse_lazy("counterparty_list")
+    template_name = "update_view.html"
 
     def get_object(self, **kwargs):
         id_ = self.kwargs.get("id")
@@ -329,7 +342,6 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         context.update({"columns": self.columnsRoom})
         return context
 
@@ -342,7 +354,6 @@ class ContractUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ContractCreateForm
     template_name = "update_view.html"
     success_url = reverse_lazy("contract_list")
-
 
     def get_object(self, **kwargs):
         id_ = self.kwargs.get("id")
@@ -406,10 +417,28 @@ class VillaDetailView(LoginRequiredMixin, DetailView):
 
 
 class VillaUpdateView(LoginRequiredMixin, UpdateView):
-    model = Villa
-    fields = "__all__"
-    template_name = "update_view.html"
+    # model = Villa
+    # fields = "__all__"
+    # template_name = "update_view.html"
+    # success_url = reverse_lazy("villa_list")
+
+    form_class = VillaCreateForm
     success_url = reverse_lazy("villa_list")
+    template_name = "update_view.html"
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Villa, id=id_)
+
+
+class VillaDeleteView(LoginRequiredMixin, DeleteView):
+    model = Villa
+    template_name = "delete_view.html"
+    success_url = reverse_lazy("villa_list")
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Villa, id=id_)
 
 
 # ==================================================== TRAIN VIEWS =====================================================
@@ -447,6 +476,27 @@ class TrainCreateView(LoginRequiredMixin, CreateView):
     fields = '__all__'
     success_url = reverse_lazy("train_list")
     template_name = "train/train_create_view.html"
+
+
+class TrainUpdateView(LoginRequiredMixin, UpdateView):
+    model = Train
+    fields = '__all__'
+    success_url = reverse_lazy("train_list")
+    template_name = "update_view.html"
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Train, pk=id_)
+
+
+class TrainDeleteView(LoginRequiredMixin, DeleteView):
+    model = Train
+    template_name = "delete_view.html"
+    success_url = reverse_lazy("train_list")
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Train, id=id_)
 
 
 # ========================================= CONTRACTS DETAIL VIEWS =====================================================
@@ -777,6 +827,45 @@ def get_rooms_by_hotels(request):
     return render(request, "rest_list_view.html", {"objects": rooms})
 
 
+class DownloadView(LoginRequiredMixin, View):
+    def get(self, request):
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        filename = "test.xlsx"
+        filepath = base_dir + "/docs/" + filename
+        thefile = filepath
+        filename = os.path.basename(thefile)
+        chunk_size = 8192
+        response = StreamingHttpResponse(FileWrapper(open(thefile, 'rb'), chunk_size),
+                                         content_type=mimetypes.guess_type(thefile)[0])
+        response['Content-Length'] = os.path.getsize(thefile)
+        response['Content-Disposition'] = "Attachment;filename=%s" % filename
+        return render(request)
+
+    def post(self, request, pk=None):
+        # if pk is None:
+        #     form = RoomCreateForm(request.POST)
+        # else:
+        #     initial_data = {"hotel": Hotel.objects.get(pk=pk)}
+        #     form = RoomCreateForm(request.POST, initial=initial_data)
+        # if form.is_valid:
+        #     form.save()
+        # return redirect(f"/reservation/hotele/{pk}")
+        return None
+
+
+@login_required
+def downloadfile(request, id_):
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = Contract.objects.get(id=id_).name.replace("/" , "_")
+    filepath = base_dir + "/docs/" + filename + ".xlsx"
+    thefile = filepath
+    filename = os.path.basename(thefile)
+    chunk_size = 8192
+    response = StreamingHttpResponse(FileWrapper(open(thefile, 'rb'), chunk_size),
+                                     content_type=mimetypes.guess_type(thefile)[0])
+    response['Content-Length'] = os.path.getsize(thefile)
+    response['Content-Disposition'] = "Attachment;filename=%s" % filename
+    return response
 
 @login_required
 def populate_db(request):

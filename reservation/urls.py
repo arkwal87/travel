@@ -18,10 +18,14 @@ urlpatterns = [
     path("wille/", reservation_views.VillaListView.as_view(), name="villa_list"),
     path("wille/dodaj", reservation_views.VillaCreateView.as_view(), name="villa_create"),
     path("wille/<int:id>", reservation_views.VillaDetailView.as_view(), name="villa_details"),
+    path("wille/<int:id>/edytuj", reservation_views.VillaUpdateView.as_view(), name="villa_update"),
+    path("wille/<int:id>/usun", reservation_views.VillaDeleteView.as_view(), name="villa_delete"),
 
     path("pociagi/", reservation_views.TrainListView.as_view(), name="train_list"),
     path("pociagi/dodaj", reservation_views.TrainCreateView.as_view(), name="train_create"),
     path("pociagi/<int:id>", reservation_views.TrainDetailView.as_view(), name="train_details"),
+    path("pociagi/<int:id>/edytuj", reservation_views.TrainUpdateView.as_view(), name="train_update"),
+    path("pociagi/<int:id>/usun", reservation_views.TrainDeleteView.as_view(), name="train_delete"),
 
     path("pokoje/<int:id>", reservation_views.RoomDetailView.as_view(), name="room_details"),
     path("pokoje/<int:id>/edytuj", reservation_views.RoomUpdateView.as_view(), name="room_update"),
@@ -39,6 +43,7 @@ urlpatterns = [
     path("umowy/<int:id>/edytuj", reservation_views.ContractUpdateView.as_view(), name="contract_update"),
     path("umowy/<int:id>/usun", reservation_views.ContractDeleteView.as_view(), name="contract_delete"),
     path("umowy/<int:id>/umowa", reservation_views.CreateContractView.as_view(), name="create_contract"),
+    path("umowy/<int:id>/downloadfile/", reservation_views.downloadfile, name='downloadfile'),
 
 
     path("umowy/<int:id>/pokoj/",
@@ -106,6 +111,8 @@ urlpatterns = [
     path("umowy/<int:id>/inne/<int:pk>/",
          reservation_views.ContractOtherDetailView.as_view(),
          name="contract_other_details"),
+
+    # path("downloadfile2/", reservation_views.DownloadView, name='downloadfile2'),
 
     # path('excel/', views1.downloadexcel, name="downloadexcel"),
 

@@ -76,6 +76,9 @@ class BankAccount(models.Model):
     currency_hash = models.ForeignKey(Currency, on_delete=models.CASCADE)
     account_no = models.CharField(max_length=26)
 
+    def __str__(self):
+        return f"Rachunek w {self.currency_hash}"
+
 
 class Client(models.Model):
     first_name = models.CharField(max_length=32)
@@ -194,18 +197,18 @@ class Airline(models.Model):
         return f'{self.name}'
 
 
-class Airport(models.Model):
-    name = models.CharField(max_length=32)
-    city = models.CharField(max_length=32)
-    country = models.ForeignKey(Country, on_delete=models.CASCADE)
-    short_name = models.CharField(max_length=8)
+# class Airport(models.Model):
+#     name = models.CharField(max_length=32)
+#     city = models.CharField(max_length=32)
+#     country = models.ForeignKey(Country, on_delete=models.CASCADE)
+#     short_name = models.CharField(max_length=8)
 
 
-class AirplaneRoutes(models.Model):
-    departure_airport = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="dep_airport")
-    arrival_airport = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="arr_dest")
-    departure_date = models.DateField()
-    arrival_date = models.DateField()
+# class AirplaneRoutes(models.Model):
+#     departure_airport = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="dep_airport")
+#     arrival_airport = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="arr_dest")
+#     departure_date = models.DateField()
+#     arrival_date = models.DateField()
 
 
 class Message(models.Model):
@@ -254,14 +257,14 @@ class Contract(models.Model):
             dates_to = [0]
         return [min(dates_from), max(dates_to)]
 
-    def get_price(self):
-        test_dict = {}
-        for currency in Currency.objects.all():
-            cur_value = ContractVilla.objects.filter(
-                contract=self, offer_currency=currency
-            ).aggregate(Sum("price_offer"))['price_offer__sum']
-            test_dict[currency.hash] = cur_value
-        return test_dict
+    def get_price_dict(self):
+        final_res = {}
+        products = ["Pokoje", "Wille", "Pociągi", "Bilety", "Ubezpieczenia", "Inne"]
+        for index, model in enumerate([ContractRoom, ContractVilla, ContractTrain, ContractTicket, ContractInsurance,
+                                       ContractOther]):
+            if self.get_prices(model_name=model) != {}:
+                final_res[products[index]] = self.get_prices(model_name=model)
+        return final_res
 
     def get_all_prices(self):
         models_list = [ContractRoom, ContractVilla, ContractTrain, ContractInsurance, ContractTicket, ContractOther]
@@ -281,7 +284,8 @@ class Contract(models.Model):
             cur_value = model_name.objects.filter(
                 contract=self, offer_currency=currency
             ).aggregate(Sum("price_offer"))['price_offer__sum']
-            price_results[currency.hash] = cur_value
+            if cur_value is not None:
+                price_results[currency.hash] = cur_value
         return price_results
 
 
@@ -353,7 +357,6 @@ class ContractInsurance(models.Model):
 
 
 class ContractTicket(models.Model):
-    # ticket = models.CharField(max_length=256)
     ticket_class = models.IntegerField(choices=[(1, "Ekonomiczna"), (2, "Biznesowa"), (3, "Pierwsza")], default=1)
     airline = models.ForeignKey(Airline, on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(default=1)
@@ -366,8 +369,8 @@ class ContractTicket(models.Model):
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_ticket_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
-    ticket_details = models.TextField(null=True)
-    extra_notes = models.TextField(null=True)
+    ticket_details = models.TextField(null=True, blank=True)
+    extra_notes = models.TextField(null=True, blank=True)
 
 # class Ticket(models.Model):
 #     kierunek = models.ForeignKey(AirplaneRoutes, on_delete=models.SET_NULL, null=True)

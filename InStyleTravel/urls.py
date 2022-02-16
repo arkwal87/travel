@@ -22,4 +22,5 @@ urlpatterns = [
     path("", MyTemplateView.as_view(), name="style_main_page"),
     path("reservation/", include("reservation.urls")),
     path("", include("users.urls"))
+
 ]

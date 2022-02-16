@@ -16,7 +16,7 @@ function tableKwargs(order, sort) {
 
 $(document).ready(function() {
     $('#detailTable').DataTable(tableKwargs(0,"asc"));
-    $('#listTable').DataTable(lang_url);
+    $('#listTable').DataTable(tableKwargs(0,"desc"));
     $('#ownersTable').DataTable(tableKwargs(0,"asc"));
     $('#clientsTable').DataTable(tableKwargs(0,"asc"));
     $('#productsTable').DataTable(tableKwargs(0,"asc"));

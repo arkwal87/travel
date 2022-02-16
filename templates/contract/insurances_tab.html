@@ -4,6 +4,7 @@
     <tr>
       <th scope="col">Typ ubezpieczenia</th>
       <th scope="col">Kontrahent</th>
+      <th scope="col">Cena ofertowa</th>
       <th scope="col">Operacje</th>
     </tr>
   </thead>
@@ -12,6 +13,7 @@
   <tr>
     <td>{{ insurance_reservation.get_type_display }}</td>
     <td>{{ insurance_reservation.counterparty }}</td>
+    <td>{{ insurance_reservation.price_offer }}</td>
     <td>
         <a href="{% url 'contract_insurance_delete' id=object.id pk=insurance_reservation.id %}"
            class="btn btn-secondary active btn-sm"

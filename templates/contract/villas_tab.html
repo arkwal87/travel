@@ -8,6 +8,7 @@
       <th scope="col">Data od</th>
       <th scope="col">Data do</th>
       <th scope="col">Kontrahent</th>
+      <th scope="col">Cena ofertowa</th>
       <th scope="col">Operacje</th>
     </tr>
   </thead>
@@ -19,6 +20,7 @@
     <td>{{ villa_reservation.date_from|date:"Y-m-d"}}</td>
     <td>{{ villa_reservation.date_to|date:"Y-m-d"}}</td>
     <td>{{ villa_reservation.counterparty }}</td>
+    <td>{{ villa_reservation.price_offer}}</td>
     <td>
         <a href="{% url 'contract_villa_delete' id=object.id pk=villa_reservation.id %}"
            class="btn btn-secondary active btn-sm"

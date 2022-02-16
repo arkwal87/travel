@@ -1,9 +1,7 @@
 import openpyxl
-from django.core.exceptions import ObjectDoesNotExist
+
 from openpyxl.styles import Border, Side, Alignment, Font, PatternFill
 from openpyxl.drawing.image import Image
-
-from xlsx2html import xlsx2html
 
 from reservation.models import Contract, ContractRoom, ContractVilla, ContractTrain, ContractInsurance, ContractTicket, \
     ContractOther, BankAccount, Currency
@@ -95,7 +93,8 @@ def excel_create_price_str(reservation, model):
             if price_string != "SUMA: ":
                 price_string += f" + "
             price_string += f"{cur_value} {cur_name}"
-    return price_string
+
+    return price_string if price_string != "SUMA: " else ""
 
 
 def excel_new_page_check(xl_file, xl_info, heading):
@@ -141,6 +140,10 @@ def excel_add_new_page(xl_file, page):
 
 def excel_contract_details(xl_file, reservation):
     xl_sheet = xl_file["umowa"]
+    xl_sheet["B8"].value = f"UMOWA NR {reservation.name}"
+    xl_sheet["B8"].font = Font(name="Calibry Light", size=16, bold=True)
+    xl_sheet["B8"].alignment = Alignment(wrap_text=True, horizontal="center", vertical="center")
+    xl_sheet.merge_cells("B8:Y8")
     xl_sheet["R18"].value = reservation.date_of_contract
     xl_sheet["R21"].value = f"{reservation.get_dates[0]} - {reservation.get_dates[1]}"
     xl_sheet["B28"].value = f"{reservation.owner.first_name} {reservation.owner.last_name}"
@@ -303,7 +306,6 @@ def excel_create_table(xl_file, xl_columns, xl_info, model, reservation):
             xl_sheet.merge_cells(f"{column_pair[0]}{xl_info['row']}:{column_pair[1]}{xl_info['row'] + 2}")
         xl_info['row'] += 3
     xl_info['row'] += 1
-    # xl_info = excel_new_page_check(xl_file, xl_info, False)
     xl_sheet[f"Y{xl_info['row']}"].value = excel_create_price_str(reservation, model)
     xl_sheet[f"Y{xl_info['row']}"].alignment = Alignment(horizontal="right")
     xl_info['row'] += 3
@@ -358,13 +360,7 @@ def contract_to_excel(id):
             xl_columns.clear()
 
     xl_info = excel_insurance(xl_file, xl_info, reservation)
-
     xl_info = excel_last_page(xl_file, xl_info, reservation)
-
     excel_numerate_plus_logo(xl_file, page_num=xl_info['page'])
 
     xl_file.save(f"docs/{reservation.name.replace('/','_')}.xlsx")
-
-    # xl_file.save(f"docs/a_v1.xlsx")
-
-    # xlsx2html('docs/test.xlsx', 'docs/test.html')
