@@ -37,6 +37,9 @@ urlpatterns = [
     path("umowy/dodaj", reservation_views.ContractCreateView.as_view(), name="contract_create"),
     path("umowy/<int:id>", reservation_views.ContractDetailView.as_view(), name="contract_detail_view"),
     path("umowy/<int:id>/edytuj", reservation_views.ContractUpdateView.as_view(), name="contract_update"),
+    path("umowy/<int:id>/usun", reservation_views.ContractDeleteView.as_view(), name="contract_delete"),
+    path("umowy/<int:id>/umowa", reservation_views.CreateContractView.as_view(), name="create_contract"),
+
 
     path("umowy/<int:id>/pokoj/",
          reservation_views.ContractRoomCreateView.as_view(),
@@ -103,6 +106,8 @@ urlpatterns = [
     path("umowy/<int:id>/inne/<int:pk>/",
          reservation_views.ContractOtherDetailView.as_view(),
          name="contract_other_details"),
+
+    # path('excel/', views1.downloadexcel, name="downloadexcel"),
 
     path('rest/get_countries/', reservation_views.get_countries_by_continent),
     path('rest/get_regions/', reservation_views.get_regions_by_countries),

@@ -38,7 +38,7 @@ LABELS = {
     "room_size": "Powierzchnia pokoju [m2]",
     "terrace_size": "Powierzchnia tarasu [m2]",
     "train": "Nazwa pociągu",
-    "cabin_category": "Kategoria kabiny",
+    "cabin_name": "Nazwa kabiny",
     "type": "Typ ubezpieczenia",
     "ticket": "Trasa",
     "ticket_class": "Klasa",
@@ -47,8 +47,16 @@ LABELS = {
     "date_arrival": "Przylot",
     "extra_notes": "Dodatkowe informacje",
     "description": "Opis",
-    'size': 'Powierzchnia [m2]',
-    'rooms_no': 'Liczba pokoi',
+    "size": "Powierzchnia [m2]",
+    "rooms_no": "Liczba pokoi",
+    "date_of_sign": "Data podpisania",
+    "client": "Lista klientów",
+    "owner": "Właściciel",
+    "leader": "Lider",
+    "payment_deadline": "Data płatności",
+    "cancellation_deadline": "Data anulowania",
+    "cancellation_policy": "Polityka rezygnacji",
+    "payment_policy": "Polityka płatności",
 }
 
 
@@ -60,11 +68,26 @@ class DateTimeInput(forms.DateTimeInput):
     input_type = 'datetime-local'
 
 
+class ContractCreateForm(forms.ModelForm):
+    class Meta:
+        model = Contract
+        fields = "__all__"
+        widgets = {
+            "date_of_contract": forms.HiddenInput,
+            "name": forms.HiddenInput,
+            "date_of_sign": DateInput(),
+            "cancellation_deadline": DateInput(),
+            "payment_deadline": DateInput()
+        }
+        labels = LABELS
+
+
 class ClientCreateForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ["first_name", "last_name", "date_of_birth", "phone_number", "email", "city", "postcode", "address",
                   "reference"]
+        widgets = {"date_of_birth": DateInput()}
         labels = LABELS
 
 

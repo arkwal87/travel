@@ -8,6 +8,7 @@
       <th scope="col">Data od</th>
       <th scope="col">Data do</th>
       <th scope="col">Kontrahent</th>
+      <th scope="col">Cena offer</th>
       <th scope="col">Operacje</th>
     </tr>
   </thead>
@@ -20,6 +21,7 @@
     <td>{{ room_reservation.date_from|date:"Y-m-d"}}</td>
     <td>{{ room_reservation.date_to|date:"Y-m-d"}}</td>
     <td>{{ room_reservation.counterparty }}</td>
+    <td>{{ room_reservation.price_offer }}</td>
     <td>
         <a href="{% url 'contract_room_delete' id=object.id pk=room_reservation.id %}"
            class="btn btn-secondary active btn-sm"

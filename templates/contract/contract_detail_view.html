@@ -1,113 +1,179 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-<div class="mt-2 col-md-12 row">
-    <div class="col-xs-12">
-        ID kontraktu: <br>
-        Cena:<br>
-        Cena za serwis:<br>
-        Data zawarcia:<br>
-        Data wyjazdu:<br>
-        Data powrotu:<br>
-        Zamawiający:<br>
-        Uczestnicy:<br>
+<div class="row">
+{#<div class="mt-2 col-md-12 row">#}
+{#    <div class="col-xs-12 col-3">#}
+    <div class="col-1 bg-white">
+        <p class="mb-0">ID kontraktu:</p>
+        <p class="mb-0">Umowa nr:</p>
+        <p class="mb-0">Cena:</p>
+        <p class="mb-0">Cena za serwis:</p>
+        <p class="mb-0">Data zawarcia:</p>
+        <p class="mb-0">Data rozpoczęcia:</p>
+        <p class="mb-0">Data zakończenia:</p>
+        <p class="mb-0">Zamawiający:</p>
+        <p class="mb-0">Uczestnicy:</p>
     </div>
-    <div class="col-xs-12 ml-5">
-        {{ object.id }}<br>
-        {{ object.get_price_offer }}<br>
-        {{ object.price_service }}<br>
-        {{ object.date_of_contract|date:"Y-m-d" }}<br>
-        {% if not object.get_dates.0 == 0 %}
-            {{ object.get_dates.0|date:"Y-m-d" }}
-        {% endif %}<br>
+{#    <div class="col-xs-12 ml-5 col-3">#}
+    <div class="col-1 bg-white">
+        <p class="mb-0">{{ object.id }}&nbsp;</p>
+        <p class="mb-0">{{ object.name }}&nbsp;</p>
+        <p class="mb-0">{{ object.get_price_offer }}&nbsp;</p>
+{#        {% for price in object.get_price_room %}#}
+{#            <p class="mb-0">{{ price.1 }} {{ price.0 }}</p>#}
+{#        {% endfor %}#}
+{#        {% for key, value in object.get_price.items %}#}
+{#            {{key}} - {{value}} <br>#}
+{#        {% endfor %}#}
+        <p class="mb-0">{{ object.price_service }}&nbsp;</p>
+        <p class="mb-0">{{ object.date_of_sign|date:"Y-m-d" }}&nbsp;</p>
+        <p class="mb-0">
+            {% if not object.get_dates.0 == 0 %}
+                {{ object.get_dates.0|date:"Y-m-d" }}
+            {% endif %}
+        &nbsp;</p>
         {% if not object.get_dates.1 == 0 %}
-            {{ object.get_dates.1|date:"Y-m-d" }}
-        {% endif %}<br>
-        <a href="/reservation/klienci/{{ object.owner.id }}">{{ object.owner }}</a><br>
+            <p class="mb-0">{{ object.get_dates.1|date:"Y-m-d" }}&nbsp;</p>
+        {% endif %}
+        <p class="mb-0"><a href="/reservation/klienci/{{ object.owner.id }}">{{ object.owner }}</a></p>
         {% for client in object.client.all %}
-            <a href="/reservation/klienci/{{ client.id }}">{{ client }}</a><br>
+            <p class="mb-0"><a href="/reservation/klienci/{{ client.id }}">{{ client }}</a></p>
         {% endfor %}
     </div>
+{#    <div class="col-xs-12 ml-xl-5 col-3">#}
+    <div class="col-2 bg-white">
+        Poszczególne ceny: <br>
+    </div>
+    <div class="col-2 bg-white">
+        Polityka rezygnacji: <br>
+        {{ object.cancellation_policy|linebreaks }}
+    </div>
+{#    <div class="col-xs-12 ml-xl-5 col-3">#}
+    <div class="col-4 bg-white">
+        Polityka płatności: <br>
+        {{ object.payment_policy|linebreaks }}
+    </div>
+{#    <div class="col-1">#}
+{##}
+{#    </div>#}
 </div>
-<div class="mt-4">
-    <a href="{% url 'contract_room_create' id=object.id %}"
-       class="btn btn-info active"
-       role="button"
-       aria-pressed="true">Rezerwuj pokój
-    </a>
-    <a href="{% url 'contract_villa_create' id=object.id %}"
-       class="btn btn-info active"
-       role="button"
-       aria-pressed="true">Rezerwuj willę
-    </a>
-    <a href="{% url 'contract_train_create' id=object.id %}"
-       class="btn btn-info active"
-       role="button"
-       aria-pressed="true">Rezerwuj pociąg
-    </a>
-    <a href="{% url 'contract_ticket_create' id=object.id %}"
-       class="btn btn-info active"
-       role="button"
-       aria-pressed="true">Dodaj bilet
-    </a>
-    <a href="{% url 'contract_insurance_create' id=object.id %}"
-       class="btn btn-info active"
-       role="button"
-       aria-pressed="true">Dodaj ubzepieczenie
-    </a>
-    <a href="{% url 'contract_other_create' id=object.id %}"
-       class="btn btn-info active"
-       role="button"
-       aria-pressed="true">Dodaj inną usługę
-    </a>
+{#    <div class="col-2">#}
+{#        Polityka rezygnacji: <br>#}
+{#        {{ object.payment_policy|linebreaks }}#}
+{#    </div>#}
+{#</div>#}
+{#        </div>#}
+{#    <div class="container ml-5">#}
+{#        <div class="row">#}
+{#            <div class="col-6">#}
+{#                Polityka rezygnacji: <br>#}
+{#                {{ object.cancellation_policy|linebreaks }}#}
+{#            </div>#}
+{#            <div class="col-6">#}
+{#                Polityka płątności: <br>#}
+{#                {{ object.payment_policy|linebreaks }}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{#</div>#}
+<div class="container-fluid">
+ <button type="submit" value='docs/test.xlsx' onclick="location.href='{% url 'create_contract' id=object.id %}'" name='mybtn2'>Download Excel file</button>
+    <div class="row mt-4">
+        <a href="{% url 'contract_room_create' id=object.id %}"
+           class="btn btn-info active col mr-1"
+           role="button"
+           aria-pressed="true">Rezerwuj pokój
+        </a>
+        <a href="{% url 'contract_villa_create' id=object.id %}"
+           class="btn btn-info active col mr-1"
+           role="button"
+           aria-pressed="true">Rezerwuj willę
+        </a>
+        <a href="{% url 'contract_train_create' id=object.id %}"
+           class="btn btn-info active col mr-1"
+           role="button"
+           aria-pressed="true">Rezerwuj pociąg
+        </a>
+        <a href="{% url 'contract_ticket_create' id=object.id %}"
+           class="btn btn-info active col mr-1"
+           role="button"
+           aria-pressed="true">Dodaj bilet
+        </a>
+        <a href="{% url 'contract_insurance_create' id=object.id %}"
+           class="btn btn-info active col mr-1"
+           role="button"
+           aria-pressed="true">Dodaj ubzepieczenie
+        </a>
+        <a href="{% url 'contract_other_create' id=object.id %}"
+           class="btn btn-info active col mr-1"
+           role="button"
+           aria-pressed="true">Dodaj inną usługę
+        </a>
+    </div>
 </div>
-<div class="mt-4">
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="tab-rooms" data-bs-toggle="tab" data-bs-target="#rooms" type="button"
-                    role="tab" aria-controls="rooms" aria-selected="true">Pokoje</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-villas" data-bs-toggle="tab" data-bs-target="#villas" type="button"
-                    role="tab" aria-controls="villas" aria-selected="false">Wille</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-trains" data-bs-toggle="tab" data-bs-target="#trains" type="button"
-                    role="tab" aria-controls="trains" aria-selected="false">Pociągi</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-tickets" data-bs-toggle="tab" data-bs-target="#tickets" type="button"
-                    role="tab" aria-controls="tickets" aria-selected="false">Bilety lotnicze</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-insurances" data-bs-toggle="tab" data-bs-target="#insurances" type="button"
-                    role="tab" aria-controls="insurances" aria-selected="false">Ubezpieczenia</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-others" data-bs-toggle="tab" data-bs-target="#others" type="button"
-                    role="tab" aria-controls="others" aria-selected="false">Inne</button>
-        </li>
-    </ul>
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="rooms" role="tabpanel" aria-labelledby="rooms-tab">
-            {% include "contract/rooms_tab.html" %}
+<div class="container-fluid">
+    <div class="mt-4">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button
+                    class="nav-link active" id="tab-rooms" data-bs-toggle="tab" data-bs-target="#rooms"
+                    type="button" role="tab" aria-controls="rooms" aria-selected="true">Pokoje
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button
+                    class="nav-link" id="tab-villas" data-bs-toggle="tab" data-bs-target="#villas"
+                    type="button" role="tab" aria-controls="villas" aria-selected="false">Wille
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button
+                    class="nav-link" id="tab-trains" data-bs-toggle="tab" data-bs-target="#trains"
+                    type="button" role="tab" aria-controls="trains" aria-selected="false">Pociągi
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button
+                    class="nav-link" id="tab-tickets" data-bs-toggle="tab" data-bs-target="#tickets"
+                    type="button" role="tab" aria-controls="tickets" aria-selected="false">Bilety lotnicze
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button
+                    class="nav-link" id="tab-insurances" data-bs-toggle="tab" data-bs-target="#insurances"
+                    type="button" role="tab" aria-controls="insurances" aria-selected="false">Ubezpieczenia
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button
+                    class="nav-link" id="tab-others" data-bs-toggle="tab" data-bs-target="#others"
+                    type="button" role="tab" aria-controls="others" aria-selected="false">Inne
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="rooms" role="tabpanel" aria-labelledby="rooms-tab">
+                {% include "contract/rooms_tab.html" %}
+            </div>
+            <div class="tab-pane fade" id="villas" role="tabpanel" aria-labelledby="villas-tab">
+                {% include "contract/villas_tab.html" %}
+            </div>
+            <div class="tab-pane fade" id="trains" role="tabpanel" aria-labelledby="trains-tab">
+                {% include "contract/trains_tab.html" %}
+            </div>
+            <div class="tab-pane fade" id="tickets" role="tabpanel" aria-labelledby="tickets-tab">
+                {% include "contract/tickets_tab.html" %}
+            </div>
+            <div class="tab-pane fade" id="insurances" role="tabpanel" aria-labelledby="insurances-tab">
+                {% include "contract/insurances_tab.html" %}
+            </div>
+            <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">
+                {% include "contract/others_tab.html" %}
+            </div>
+            <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="contact-tab">dane inne</div>
         </div>
-        <div class="tab-pane fade" id="villas" role="tabpanel" aria-labelledby="villas-tab">
-            {% include "contract/villas_tab.html" %}
-        </div>
-        <div class="tab-pane fade" id="trains" role="tabpanel" aria-labelledby="trains-tab">
-            {% include "contract/trains_tab.html" %}
-        </div>
-        <div class="tab-pane fade" id="tickets" role="tabpanel" aria-labelledby="tickets-tab">
-            {% include "contract/tickets_tab.html" %}
-        </div>
-        <div class="tab-pane fade" id="insurances" role="tabpanel" aria-labelledby="insurances-tab">
-            {% include "contract/insurances_tab.html" %}
-        </div>
-        <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">
-            {% include "contract/others_tab.html" %}
-        </div>
-        <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="contact-tab">dane inne</div>
     </div>
 </div>
 <script src={% static "js/tabs.js" %}></script>

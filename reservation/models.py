@@ -72,6 +72,11 @@ class Currency(models.Model):
         return self.hash
 
 
+class BankAccount(models.Model):
+    currency_hash = models.ForeignKey(Currency, on_delete=models.CASCADE)
+    account_no = models.CharField(max_length=26)
+
+
 class Client(models.Model):
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
@@ -209,10 +214,17 @@ class Message(models.Model):
 
 
 class Contract(models.Model):
-    date_of_contract = models.DateField()
+    name = models.CharField(max_length=14, blank=True, editable=False)
+    date_of_contract = models.DateField(auto_now_add=True, null=True, blank=True)
+    date_of_sign = models.DateField(null=True, blank=True)
     client = models.ManyToManyField(Client)
     owner = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contract_owner")
     leader = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contract_leader")
+    # TUTAJ ZMIEN NULL I BLANK! MUSI BYC PODANE!
+    payment_deadline = models.DateField(null=True, blank=True)
+    cancellation_deadline = models.DateField(null=True, blank=True)
+    cancellation_policy = models.TextField(null=True, blank=True)
+    payment_policy = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return str(self.id)
@@ -242,8 +254,35 @@ class Contract(models.Model):
             dates_to = [0]
         return [min(dates_from), max(dates_to)]
 
-    def get_price_offer(self):
-        return ContractRoom.objects.filter(contract=self).aggregate(Sum("price_offer"))['price_offer__sum']
+    def get_price(self):
+        test_dict = {}
+        for currency in Currency.objects.all():
+            cur_value = ContractVilla.objects.filter(
+                contract=self, offer_currency=currency
+            ).aggregate(Sum("price_offer"))['price_offer__sum']
+            test_dict[currency.hash] = cur_value
+        return test_dict
+
+    def get_all_prices(self):
+        models_list = [ContractRoom, ContractVilla, ContractTrain, ContractInsurance, ContractTicket, ContractOther]
+        price_sum = {}
+        for model_name in models_list:
+            model_sum = self.get_prices(model_name)
+            price_sum = {
+                k: float(0 if model_sum.get(k, 0) is None else model_sum.get(k, 0)) +
+                   float(0 if price_sum.get(k, 0) is None else price_sum.get(k, 0))
+                for k in set(model_sum) | set(price_sum)
+            }
+        return price_sum
+
+    def get_prices(self, model_name):
+        price_results = {}
+        for currency in Currency.objects.all():
+            cur_value = model_name.objects.filter(
+                contract=self, offer_currency=currency
+            ).aggregate(Sum("price_offer"))['price_offer__sum']
+            price_results[currency.hash] = cur_value
+        return price_results
 
 
 class ContractRoom(models.Model):
@@ -252,6 +291,7 @@ class ContractRoom(models.Model):
     date_to = models.DateField()
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
     room_number = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    # offer - dla klienta
     price_offer = models.DecimalField(max_digits=10, decimal_places=2)
     price_net = models.DecimalField(max_digits=10, decimal_places=2)
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_room_currency")
@@ -275,7 +315,7 @@ class ContractVilla(models.Model):
 
 class ContractTrain(models.Model):
     train = models.ForeignKey(Train, on_delete=models.SET_NULL, null=True)
-    cabin_category = models.CharField(max_length=32)
+    cabin_name = models.CharField(max_length=32)
     date_from = models.DateField()
     date_to = models.DateField()
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
@@ -302,27 +342,32 @@ class ContractOther(models.Model):
 
 class ContractInsurance(models.Model):
     type = models.IntegerField(choices=[(1, "Podróżne"), (2, "Kosztów rezygnacji")], default=1)
+    insurance_no = models.CharField(max_length=256)
     price_offer = models.DecimalField(max_digits=10, decimal_places=2)
     price_net = models.DecimalField(max_digits=10, decimal_places=2)
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_insurance_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_insurance_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
+    extra_notes = models.TextField(null=True)
 
 
 class ContractTicket(models.Model):
-    ticket = models.CharField(max_length=256)
+    # ticket = models.CharField(max_length=256)
     ticket_class = models.IntegerField(choices=[(1, "Ekonomiczna"), (2, "Biznesowa"), (3, "Pierwsza")], default=1)
     airline = models.ForeignKey(Airline, on_delete=models.SET_NULL, null=True)
-    date_departure = models.DateTimeField()
-    date_arrival = models.DateTimeField()
+    quantity = models.IntegerField(default=1)
+    # TUTAJ ZMIEN NULL I BLANK! MUSI BYC PODANE!
+    date_departure = models.DateField(null=True, blank=True)
+    date_arrival = models.DateField(null=True, blank=True)
     price_offer = models.DecimalField(max_digits=10, decimal_places=2)
     price_net = models.DecimalField(max_digits=10, decimal_places=2)
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_ticket_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_ticket_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
-    extra_notes = models.CharField(max_length=12800, null=True)
+    ticket_details = models.TextField(null=True)
+    extra_notes = models.TextField(null=True)
 
 # class Ticket(models.Model):
 #     kierunek = models.ForeignKey(AirplaneRoutes, on_delete=models.SET_NULL, null=True)

@@ -13,13 +13,14 @@ from django.views.generic import CreateView, DetailView, View, DeleteView, Updat
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from reservation.excel_creator import contract_to_excel
 from reservation.models import Client, Hotel, Room, Country, Continent, Region, Counterparty, Contract, MealPlan, \
     Reference, Currency, ContractRoom, Villa, ContractVilla, Airline, ContractTrain, Train, ContractInsurance, \
     ContractTicket, ContractOther
 from reservation.forms import RoomCreateForm, HotelCreateForm, ClientCreateForm, CounterpartyCreateForm, \
     VillaCreateForm, \
     ContractRoomCreateForm, ContractVillaCreateForm, ContractTrainCreateForm, ContractInsuranceCreateForm, \
-    ContractTicketCreateForm, ContractOtherCreateForm
+    ContractTicketCreateForm, ContractOtherCreateForm, ContractCreateForm
 
 
 # ================================== CLIENTS VIEWS =====================================================================
@@ -52,7 +53,6 @@ class ClientListView(LoginRequiredMixin, ListView):
     model = Client
     template_name = "client/client_list_view.html"
     ordering = ['last_name']
-    # paginate_by = 5
     columns = ["Nazwisko", "Imię", "Data urodzenia", "Telefon", "e-mail", "Źródło", "Lider"]
 
     def get_context_data(self, **kwargs):
@@ -62,8 +62,6 @@ class ClientListView(LoginRequiredMixin, ListView):
 
 
 class ClientCreateView(CreateView):
-    # model = Client
-    # fields = "__all__"
     form_class = ClientCreateForm
     success_url = reverse_lazy("client_list")
     template_name = "standard_create_view.html"
@@ -119,9 +117,7 @@ class HotelListView(LoginRequiredMixin, ListView):
 
 
 class HotelCreateView(LoginRequiredMixin, CreateView):
-    # model = Hotel
     form_class = HotelCreateForm
-    # fields = "__all__"
     success_url = reverse_lazy("hotel_list")
     template_name = "hotel\hotel_create_view.html"
 
@@ -272,12 +268,6 @@ class CounterpartyDetailView(LoginRequiredMixin, DetailView):
         )
         return context
 
-    @property
-    def get_products_number(self, **kwargs):
-        my_id = self.object.pk
-        my_list = ContractRoom.objects.filter()
-        return
-
 
 class CounterpartyUpdateView(LoginRequiredMixin, UpdateView):
     model = Counterparty
@@ -291,7 +281,7 @@ class CounterpartyUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class CounterpartyDeleteView(LoginRequiredMixin, DeleteView):
-    model = Room
+    model = Counterparty
     template_name = "delete_view.html"
     success_url = reverse_lazy("counterparty_list")
 
@@ -314,10 +304,16 @@ class ContractListView(LoginRequiredMixin, ListView):
 
 
 class ContractCreateView(LoginRequiredMixin, CreateView):
-    model = Contract
-    fields = "__all__"
+    form_class = ContractCreateForm
     template_name = "standard_create_view.html"
     success_url = reverse_lazy("contract_list")
+
+    def form_valid(self, form):
+        self.object = form.save()
+        contract_daily_id = len(Contract.objects.filter(date_of_contract=self.object.date_of_contract))
+        self.object.name = f'IST/{self.object.date_of_contract.strftime("%y%m%d")}/{contract_daily_id:02d}'
+        form.save()
+        return super().form_valid(form)
 
 
 class ContractDetailView(LoginRequiredMixin, DetailView):
@@ -333,14 +329,20 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         context.update({"columns": self.columnsRoom})
         return context
 
 
 class ContractUpdateView(LoginRequiredMixin, UpdateView):
-    model = Contract
-    fields = "__all__"
+    # model = Contract
+    # fields = "__all__"
+    # template_name = "update_view.html"
+    #
+    form_class = ContractCreateForm
     template_name = "update_view.html"
+    success_url = reverse_lazy("contract_list")
+
 
     def get_object(self, **kwargs):
         id_ = self.kwargs.get("id")
@@ -348,6 +350,16 @@ class ContractUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy("contract_detail_view", kwargs={'id': self.object.pk})
+
+
+class ContractDeleteView(LoginRequiredMixin, DeleteView):
+    model = Contract
+    template_name = "delete_view.html"
+    success_url = reverse_lazy("contract_list")
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Contract, id=id_)
 
 
 # ==================================================== VILLA VIEWS =====================================================
@@ -398,22 +410,6 @@ class VillaUpdateView(LoginRequiredMixin, UpdateView):
     fields = "__all__"
     template_name = "update_view.html"
     success_url = reverse_lazy("villa_list")
-
-
-#
-#     def get_object(self, **kwargs):
-#         id_ = self.kwargs.get("id")
-#         return get_object_or_404(Hotel, id=id_)
-#
-#
-# class VillaDeleteView(DeleteView):
-#     model = Hotel
-#     template_name = "delete_view.html"
-#     success_url = reverse_lazy("hotel_list")
-#
-#     def get_object(self, **kwargs):
-#         id_ = self.kwargs.get("id")
-#         return get_object_or_404(Hotel, id=id_)
 
 
 # ==================================================== TRAIN VIEWS =====================================================
@@ -716,6 +712,14 @@ class ContractOtherDetailView(LoginRequiredMixin, DetailView):
         return get_object_or_404(ContractOther, id=id_)
 
 
+# ==================================== CREATE DOCUMENT =================================================================
+
+class CreateContractView(View):
+    def get(self, request, id):
+        contract_to_excel(id)
+        return render(request, "detail_view_xls.html", context={"info": "Utworzono plik z umową!"})
+
+
 # ==================================== EXTRA FUNCTIONS =================================================================
 
 
@@ -735,7 +739,6 @@ def get_countries_by_continent(request):
 
 def get_regions_by_countries(request):
     country_id = request.GET.get('country_id')
-    print(country_id)
     if country_id == "" or country_id is None:
         regions = Region.objects.all()
     else:
@@ -772,6 +775,7 @@ def get_rooms_by_hotels(request):
         hotel = Hotel.objects.get(pk=hotel_id)
         rooms = Room.objects.filter(hotel=hotel)
     return render(request, "rest_list_view.html", {"objects": rooms})
+
 
 
 @login_required
@@ -836,8 +840,6 @@ def populate_db(request):
                 else:
                     to_insert[field.name] = row[j].value
             m = modelObj(**to_insert)
-            # if modelName == "Client":
-            #     print(m.date_of_birth)
             m.save()
 
             sequence_sql = connection.ops.sequence_reset_sql(no_style(), list(modelsDict.values()))
@@ -846,4 +848,3 @@ def populate_db(request):
                     cursor.execute(sql)
 
     return render(request, "test_view.html", {'tab_names': tab_names})
-

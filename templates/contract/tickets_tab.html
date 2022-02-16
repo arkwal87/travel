@@ -2,24 +2,20 @@
 <table class="table table-striped" id="ticketsTable" >
   <thead>
     <tr>
-      <th scope="col">Kierunek</th>
-      <th scope="col">Klasa</th>
       <th scope="col">Linia</th>
-      <th scope="col">Wylot</th>
-      <th scope="col">Przylot</th>
+      <th scope="col">Klasa</th>
       <th scope="col">Kontrahent</th>
+      <th scope="col">Liczba biletów</th>
       <th scope="col">Operacje</th>
     </tr>
   </thead>
   <tbody>
   {% for ticket_reservation in object.contractticket_set.all %}
   <tr>
-    <td>{{ ticket_reservation.ticket }}</td>
-    <td>{{ ticket_reservation.get_ticket_class_display }}</td>
     <td>{{ ticket_reservation.airline }}</td>
-    <td>{{ ticket_reservation.date_departure|date:"Y-m-d G:i"}}</td>
-    <td>{{ ticket_reservation.date_arrival|date:"Y-m-d G:i"}}</td>
+    <td>{{ ticket_reservation.get_ticket_class_display }}</td>
     <td>{{ ticket_reservation.counterparty }}</td>
+    <td>{{ ticket_reservation.quantity }}</td>
     <td>
         <a href="{% url 'contract_ticket_details' id=object.id pk=object.id %}"
            class="btn btn-secondary active btn-sm"

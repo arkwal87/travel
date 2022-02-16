@@ -17,7 +17,7 @@
   {% for train_reservation in object.contracttrain_set.all %}
   <tr>
     <td>{{ train_reservation.train.name }}</td>
-    <td>{{ train_reservation.cabin_category }}</td>
+    <td>{{ train_reservation.cabin_name }}</td>
     <td>{{ train_reservation.meal_plan }}</td>
     <td>{{ train_reservation.date_from|date:"Y-m-d"}}</td>
     <td>{{ train_reservation.date_to|date:"Y-m-d"}}</td>

@@ -88,8 +88,8 @@
         </div>
       </nav>
 
-      <div class="container-fluid">
-        <h1 class="mt-4"></h1>
+      <div class="container-fluid mt-4">
+{#        <div class="mt-4">#}
 {#          <p class="text-xl-center">System biura podróży InStyle Travel</p>#}
           {% if messages %}
             {% for message in messages %}
@@ -100,6 +100,7 @@
           {% endif %}
           {% block content %}
           {% endblock %}
+{#        </div>#}
             {% if birthday_list.0|length != 0 or birthday_list.1|length != 0 or birthday_list.2|length != 0 %}
                 <script> alert('Oho! Szykują się urodzinki! :)');</script>
             {% endif %}
@@ -147,6 +148,7 @@
   <!-- DataTables -->
   <script type="text/javascript" charset="utf8" src={% static "/DataTables/datatables.js" %}></script>
   <script type="text/javascript" charset="utf8" src={% static "/DataTables/datatables_app.js" %}></script>
+  <script type="text/javascript" charset="utf8" src={% static "/toPDF.js" %}></script>
 
 </body>
 
