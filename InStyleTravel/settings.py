@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -126,3 +127,6 @@ LOGIN_REDIRECT_URL = 'style_main_page'
 LOGIN_URL = 'login'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "docs")
+MEDIA_URL = '/docs/'

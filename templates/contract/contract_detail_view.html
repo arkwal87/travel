@@ -10,7 +10,6 @@
         <p class="mb-0">Data rozpoczęcia:</p>
         <p class="mb-0">Data zakończenia:</p>
         <p class="mb-0">Zamawiający:</p>
-{#        <p class="mb-0">Uczestnicy:</p>#}
     </div>
     <div class="col-auto bg-white">
         <p class="mb-0">{{ object.id }}&nbsp</p>
@@ -30,10 +29,7 @@
                 {{ object.get_dates.1|date:"Y-m-d" }}
             {% endif %}
         &nbsp;</p>
-        <p class="mb-0"><a href="/reservation/klienci/{{ object.owner.id }}">{{ object.owner }}</a></p>
-{#        {% for client in object.client.all %}#}
-{#            <p class="mb-0"><a href="/reservation/klienci/{{ client.id }}">{{ client }}</a></p>#}
-{#        {% endfor %}#}
+        <p class="mb-0"><a href="{% url 'client_details' id=object.owner.id %}">{{ object.owner }}</a></p>
     </div>
     <div class="col-2 bg-white border-left">
         <p>Poszczególne ceny: </p>
@@ -56,12 +52,14 @@
     <div class="mt-4">
         <p>Uczestnicy:
         {% for client in object.client.all %}
-            <a href="/reservation/klienci/{{ client.id }}">{{ client }} </a>
+            <a href="{% url 'client_details' id=client.id %}">{{ client }}</a>
         {% endfor %}
         </p>
     </div>
 <div class="container-fluid">
- <button type="submit" value='docs/test.xlsx' onclick="location.href='{% url 'create_contract' id=object.id %}'" name='mybtn2'>Download Excel file</button>
+    <button type="submit" class="btn btn-primary" value='' onclick="location.href='{% url 'downloadfile' id=object.id %}'" name='mybtn2'>Umowa - Excel</button>
+{# <button type="submit" value='docs/test.xlsx' onclick="location.href='{% url 'downloadfile' id=object.id %}'" name='mybtn2'>Download Excel file</button>#}
+{#<a href="{%url 'create_contract' id=object.id %}" target="_blank" onclick="window.open({%url 'downloadfile' id=object.id %})";>Click Here</a>#}
     <div class="row mt-4">
         <a href="{% url 'contract_room_create' id=object.id %}"
            class="btn btn-info active col mr-1"

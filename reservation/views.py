@@ -17,6 +17,7 @@ from django.views.generic import CreateView, DetailView, View, DeleteView, Updat
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from InStyleTravel.settings import MEDIA_ROOT
 from reservation.excel_creator import contract_to_excel
 from reservation.models import Client, Hotel, Room, Country, Continent, Region, Counterparty, Contract, MealPlan, \
     Reference, Currency, ContractRoom, Villa, ContractVilla, Airline, ContractTrain, Train, ContractInsurance, \
@@ -26,6 +27,7 @@ from reservation.forms import RoomCreateForm, HotelCreateForm, ClientCreateForm,
     ContractRoomCreateForm, ContractVillaCreateForm, ContractTrainCreateForm, ContractInsuranceCreateForm, \
     ContractTicketCreateForm, ContractOtherCreateForm, ContractCreateForm
 
+from django.core.files.storage import FileSystemStorage
 
 # ================================== CLIENTS VIEWS =====================================================================
 
@@ -770,6 +772,16 @@ class CreateContractView(View):
         return render(request, "detail_view_xls.html", context={"info": "Utworzono plik z umową!"})
 
 
+def upload(request):
+    print(MEDIA_ROOT)
+    print("elo")
+    if request.method == "POST":
+        uploading_file = request.FILES["document"]
+        fs = FileSystemStorage()
+        fs.save(uploading_file.name, uploading_file)
+    return render(request, 'upload.html')
+
+
 # ==================================== EXTRA FUNCTIONS =================================================================
 
 
@@ -827,45 +839,47 @@ def get_rooms_by_hotels(request):
     return render(request, "rest_list_view.html", {"objects": rooms})
 
 
-class DownloadView(LoginRequiredMixin, View):
-    def get(self, request):
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        filename = "test.xlsx"
-        filepath = base_dir + "/docs/" + filename
-        thefile = filepath
-        filename = os.path.basename(thefile)
-        chunk_size = 8192
-        response = StreamingHttpResponse(FileWrapper(open(thefile, 'rb'), chunk_size),
-                                         content_type=mimetypes.guess_type(thefile)[0])
-        response['Content-Length'] = os.path.getsize(thefile)
-        response['Content-Disposition'] = "Attachment;filename=%s" % filename
-        return render(request)
-
-    def post(self, request, pk=None):
-        # if pk is None:
-        #     form = RoomCreateForm(request.POST)
-        # else:
-        #     initial_data = {"hotel": Hotel.objects.get(pk=pk)}
-        #     form = RoomCreateForm(request.POST, initial=initial_data)
-        # if form.is_valid:
-        #     form.save()
-        # return redirect(f"/reservation/hotele/{pk}")
-        return None
+# class DownloadView(LoginRequiredMixin, View):
+#     def get(self, request):
+#         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#         filename = "test.xlsx"
+#         filepath = base_dir + "/docs/" + filename
+#         thefile = filepath
+#         filename = os.path.basename(thefile)
+#         chunk_size = 8192
+#         response = StreamingHttpResponse(FileWrapper(open(thefile, 'rb'), chunk_size),
+#                                          content_type=mimetypes.guess_type(thefile)[0])
+#         response['Content-Length'] = os.path.getsize(thefile)
+#         response['Content-Disposition'] = "Attachment;filename=%s" % filename
+#         return render(request)
+#
+#     def post(self, request, pk=None):
+#         # if pk is None:`
+#         #     form = RoomCreateForm(request.POST)
+#         # else:
+#         #     initial_data = {"hotel": Hotel.objects.get(pk=pk)}
+#         #     form = RoomCreateForm(request.POST, initial=initial_data)
+#         # if form.is_valid:
+#         #     form.save()
+#         # return redirect(f"/reservation/hotele/{pk}")
+#         return None
 
 
 @login_required
-def downloadfile(request, id_):
+def downloadfile(request, id):
+    contract_to_excel(id)
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = Contract.objects.get(id=id_).name.replace("/" , "_")
-    filepath = base_dir + "/docs/" + filename + ".xlsx"
+    filename = Contract.objects.get(id=id).name.replace("/", "_")
+    filepath = base_dir + "/media/" + filename + ".xlsx"
     thefile = filepath
-    filename = os.path.basename(thefile)
+    filename = os.path.basename(filepath)
     chunk_size = 8192
     response = StreamingHttpResponse(FileWrapper(open(thefile, 'rb'), chunk_size),
                                      content_type=mimetypes.guess_type(thefile)[0])
     response['Content-Length'] = os.path.getsize(thefile)
     response['Content-Disposition'] = "Attachment;filename=%s" % filename
     return response
+
 
 @login_required
 def populate_db(request):

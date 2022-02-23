@@ -1,5 +1,7 @@
 from django.urls import path
 from reservation import views as reservation_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("klienci/", reservation_views.ClientListView.as_view(), name="client_list"),
@@ -112,6 +114,8 @@ urlpatterns = [
          reservation_views.ContractOtherDetailView.as_view(),
          name="contract_other_details"),
 
+    path("upload/", reservation_views.upload, name="upload_file"),
+
     # path("downloadfile2/", reservation_views.DownloadView, name='downloadfile2'),
 
     # path('excel/', views1.downloadexcel, name="downloadexcel"),
@@ -127,3 +131,6 @@ urlpatterns = [
     path('test/', reservation_views.populate_db, name="test_view_db")
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

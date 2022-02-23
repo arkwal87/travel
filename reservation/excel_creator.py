@@ -117,7 +117,7 @@ def excel_numerate_plus_logo(xl_file, page_num):
     for page in range(1, page_num + 1):
         xl_file["umowa"].cell(column=13, row=row).value = f'{page} / {page_num}'
         xl_file["umowa"].cell(column=13, row=row).font = Font(size=10, name="Calibri Light")
-        img = openpyxl.drawing.image.Image('docs/logo.png')
+        img = openpyxl.drawing.image.Image('media/logo.png')
         img.anchor = f"H{row - 61}"
         xl_file["umowa"].add_image(img)
         row += 63
@@ -348,7 +348,7 @@ def contract_to_excel(id):
 
     xl_info = {'row': 13, 'page': 1}
     reservation = Contract.objects.get(pk=id)
-    xl_file = openpyxl.load_workbook("docs/instyle.xlsx")
+    xl_file = openpyxl.load_workbook("media/instyle.xlsx")
     excel_contract_details(xl_file, reservation)
     xl_info = excel_participants(xl_file, reservation, xl_info)
 
@@ -363,4 +363,4 @@ def contract_to_excel(id):
     xl_info = excel_last_page(xl_file, xl_info, reservation)
     excel_numerate_plus_logo(xl_file, page_num=xl_info['page'])
 
-    xl_file.save(f"docs/{reservation.name.replace('/','_')}.xlsx")
+    xl_file.save(f"media/{reservation.name.replace('/','_')}.xlsx")
