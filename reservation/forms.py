@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse_lazy
 
 from reservation.models import Room, Hotel, Client, Counterparty, ContractRoom, Contract, \
-    Villa, ContractVilla, ContractTrain, ContractInsurance, ContractTicket, ContractOther
+    Villa, ContractVilla, ContractTrain, ContractInsurance, ContractTicket, ContractOther, ContractFile
 
 LABELS = {
     "first_name": "Imię",
@@ -183,3 +183,9 @@ class VillaCreateForm(forms.ModelForm):
         model = Villa
         fields = ["region", "name", "size", "rooms_no", "link"]
         labels = LABELS
+
+
+class UploadForm(forms.ModelForm):
+    class Meta:
+        model = ContractFile
+        fields = "__all__"

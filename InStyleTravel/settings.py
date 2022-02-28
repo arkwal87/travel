@@ -128,5 +128,5 @@ LOGIN_URL = 'login'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "docs")
-MEDIA_URL = '/docs/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/media/'

@@ -289,6 +289,15 @@ class Contract(models.Model):
         return price_results
 
 
+class ContractFile(models.Model):
+    file_name = models.CharField(max_length=100)
+    contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
+    pdf = models.FileField(upload_to="pdfs")
+
+    def __str__(self):
+        return self.file_name
+
+
 class ContractRoom(models.Model):
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
     date_from = models.DateField()

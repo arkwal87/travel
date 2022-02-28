@@ -45,7 +45,8 @@ urlpatterns = [
     path("umowy/<int:id>/edytuj", reservation_views.ContractUpdateView.as_view(), name="contract_update"),
     path("umowy/<int:id>/usun", reservation_views.ContractDeleteView.as_view(), name="contract_delete"),
     path("umowy/<int:id>/umowa", reservation_views.CreateContractView.as_view(), name="create_contract"),
-    path("umowy/<int:id>/downloadfile/", reservation_views.downloadfile, name='downloadfile'),
+    path("umowy/<int:id>/downloadfile/", reservation_views.downloadFile, name='downloadfile'),
+    path("umowy/<int:id>/uploadfile/", reservation_views.uploadFile, name='uploadfile'),
 
 
     path("umowy/<int:id>/pokoj/",

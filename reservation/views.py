@@ -25,7 +25,7 @@ from reservation.models import Client, Hotel, Room, Country, Continent, Region, 
 from reservation.forms import RoomCreateForm, HotelCreateForm, ClientCreateForm, CounterpartyCreateForm, \
     VillaCreateForm, \
     ContractRoomCreateForm, ContractVillaCreateForm, ContractTrainCreateForm, ContractInsuranceCreateForm, \
-    ContractTicketCreateForm, ContractOtherCreateForm, ContractCreateForm
+    ContractTicketCreateForm, ContractOtherCreateForm, ContractCreateForm, UploadForm
 
 from django.core.files.storage import FileSystemStorage
 
@@ -374,6 +374,17 @@ class ContractDeleteView(LoginRequiredMixin, DeleteView):
         id_ = self.kwargs.get("id")
         return get_object_or_404(Contract, id=id_)
 
+
+def uploadFile(request, id):
+    if request.method == "POST":
+        form = UploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("contract_list")
+            # return reverse_lazy("contract_detail_view", kwargs={'id': id})
+    else:
+        form = UploadForm()
+    return render(request, "upload_file.html", {'form':form})
 
 # ==================================================== VILLA VIEWS =====================================================
 
@@ -866,7 +877,7 @@ def get_rooms_by_hotels(request):
 
 
 @login_required
-def downloadfile(request, id):
+def downloadFile(request, id):
     contract_to_excel(id)
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = Contract.objects.get(id=id).name.replace("/", "_")
