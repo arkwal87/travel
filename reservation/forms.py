@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse_lazy
 
 from reservation.models import Room, Hotel, Client, Counterparty, ContractRoom, Contract, \
-    Villa, ContractVilla, ContractTrain, ContractInsurance, ContractTicket, ContractOther, ContractFile
+    Villa, ContractVilla, ContractTrain, ContractInsurance, ContractTicket, ContractOther, ContractFile, Payment
 
 LABELS = {
     "first_name": "Imię",
@@ -57,7 +57,10 @@ LABELS = {
     "cancellation_deadline": "Data anulowania",
     "cancellation_policy": "Polityka rezygnacji",
     "payment_policy": "Polityka płatności",
-    "quantity": "Ilość"
+    "quantity": "Ilość",
+    "payment_date": "Data wpłaty",
+    "value": "Wartość",
+    "currency": "Waluta"
 }
 
 
@@ -188,4 +191,17 @@ class VillaCreateForm(forms.ModelForm):
 class UploadForm(forms.ModelForm):
     class Meta:
         model = ContractFile
+        fields = ["contract", "pdf"]
+        widgets = {
+            'contract': forms.HiddenInput,
+        }
+
+class PaymentForm(forms.ModelForm):
+    class Meta:
+        model = Payment
+        labels = LABELS
         fields = "__all__"
+        widgets = {
+            'contract': forms.HiddenInput,
+            'payment_date': DateInput(),
+        }

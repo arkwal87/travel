@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Client, Hotel, Reference, Country, Continent, Region, Currency, MealPlan, Counterparty, \
-    ContractRoom, Contract, Room, Villa, Train, ContractVilla, BankAccount
+    ContractRoom, Contract, Room, Villa, Train, ContractVilla, BankAccount, ContractFile, Payment
 
 # Register your models here.
 admin.site.register(Client)
@@ -19,3 +19,5 @@ admin.site.register(Villa)
 admin.site.register(Train)
 admin.site.register(ContractVilla)
 admin.site.register(BankAccount)
+admin.site.register(ContractFile)
+admin.site.register(Payment)

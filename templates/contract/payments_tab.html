@@ -1,0 +1,33 @@
+<div class="mt-4">
+<table class="table table-striped" id="paymentsTable" >
+  <thead>
+    <tr>
+      <th scope="col">Data</th>
+      <th scope="col">Wartość</th>
+      <th scope="col">Waluta</th>
+      <th scope="col">Operacje</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for payment in payments %}
+  <tr>
+    <td>{{ payment.payment_date|date:"Y-m-d" }}</td>
+    <td>{{ payment.value }}</td>
+    <td>{{ payment.currency }}</td>
+    <td>
+        <a href="{% url 'payment_delete' id=object.id pk=payment.id %}"
+           class="btn btn-secondary active btn-sm"
+           role="button"
+           aria-pressed="true">usun
+        </a>
+        <a href="{% url 'payment_update' id=object.id pk=payment.id %}"
+           class="btn btn-secondary active btn-sm "
+           role="button"
+           aria-pressed="true">edytuj
+        </a>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>

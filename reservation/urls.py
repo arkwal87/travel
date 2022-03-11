@@ -46,8 +46,12 @@ urlpatterns = [
     path("umowy/<int:id>/usun", reservation_views.ContractDeleteView.as_view(), name="contract_delete"),
     path("umowy/<int:id>/umowa", reservation_views.CreateContractView.as_view(), name="create_contract"),
     path("umowy/<int:id>/downloadfile/", reservation_views.downloadFile, name='downloadfile'),
-    path("umowy/<int:id>/uploadfile/", reservation_views.uploadFile, name='uploadfile'),
+    path("umowy/<int:id>/download/", reservation_views.downloadPdf, name='download'),
+    path("umowy/<int:id>/uploadfile/", reservation_views.UploadView.as_view(), name='uploadfile'),
 
+    path("umowy/<int:id>/wplata/", reservation_views.PaymentCreateView.as_view(), name='payment_create'),
+    path("umowy/<int:id>/wplata/<int:pk>/edytuj", reservation_views.PaymentUpdateView.as_view(), name='payment_update'),
+    path("umowy/<int:id>/wplata/<int:pk>/usun", reservation_views.PaymentDeleteView.as_view(), name='payment_delete'),
 
     path("umowy/<int:id>/pokoj/",
          reservation_views.ContractRoomCreateView.as_view(),

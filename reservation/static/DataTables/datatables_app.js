@@ -26,4 +26,5 @@ $(document).ready(function() {
     $('#insurancesTable').DataTable(tableKwargs(0,"asc"));
     $('#ticketsTable').DataTable(tableKwargs(0,"asc"));
     $('#othersTable').DataTable(tableKwargs(0,"asc"));
+    $('#paymentsTable').DataTable(tableKwargs(0,"asc"));
 })

@@ -381,6 +381,14 @@ class ContractTicket(models.Model):
     ticket_details = models.TextField(null=True, blank=True)
     extra_notes = models.TextField(null=True, blank=True)
 
+
+class Payment(models.Model):
+    contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
+    payment_date = models.DateField()
+
+
 # class Ticket(models.Model):
 #     kierunek = models.ForeignKey(AirplaneRoutes, on_delete=models.SET_NULL, null=True)
 #     klasa = models.CharField(max_length=32)

@@ -21,13 +21,14 @@ from InStyleTravel.settings import MEDIA_ROOT
 from reservation.excel_creator import contract_to_excel
 from reservation.models import Client, Hotel, Room, Country, Continent, Region, Counterparty, Contract, MealPlan, \
     Reference, Currency, ContractRoom, Villa, ContractVilla, Airline, ContractTrain, Train, ContractInsurance, \
-    ContractTicket, ContractOther
+    ContractTicket, ContractOther, ContractFile, Payment
 from reservation.forms import RoomCreateForm, HotelCreateForm, ClientCreateForm, CounterpartyCreateForm, \
     VillaCreateForm, \
     ContractRoomCreateForm, ContractVillaCreateForm, ContractTrainCreateForm, ContractInsuranceCreateForm, \
-    ContractTicketCreateForm, ContractOtherCreateForm, ContractCreateForm, UploadForm
+    ContractTicketCreateForm, ContractOtherCreateForm, ContractCreateForm, UploadForm, PaymentForm
 
 from django.core.files.storage import FileSystemStorage
+
 
 # ================================== CLIENTS VIEWS =====================================================================
 
@@ -150,11 +151,6 @@ class HotelDetailView(LoginRequiredMixin, DetailView):
 
 
 class HotelUpdateView(LoginRequiredMixin, UpdateView):
-    # model = Hotel
-    # fields = "__all__"
-    # template_name = "update_view.html"
-    # success_url = reverse_lazy("hotel_list")
-
     form_class = HotelCreateForm
     success_url = reverse_lazy("hotel_list")
     template_name = "update_view.html"
@@ -281,11 +277,6 @@ class CounterpartyDetailView(LoginRequiredMixin, DetailView):
 
 
 class CounterpartyUpdateView(LoginRequiredMixin, UpdateView):
-    # model = Counterparty
-    # fields = "__all__"
-    # template_name = "update_view.html"
-    # success_url = reverse_lazy("counterparty_list")
-
     form_class = CounterpartyCreateForm
     success_url = reverse_lazy("counterparty_list")
     template_name = "update_view.html"
@@ -344,15 +335,15 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({"columns": self.columnsRoom})
+        context.update({
+            "columns": self.columnsRoom,
+            "payments": Payment.objects.filter(contract=get_object_or_404(Contract, id=self.kwargs.get("id"))),
+            "files": ContractFile.objects.filter(contract=self.object)
+        })
         return context
 
 
 class ContractUpdateView(LoginRequiredMixin, UpdateView):
-    # model = Contract
-    # fields = "__all__"
-    # template_name = "update_view.html"
-    #
     form_class = ContractCreateForm
     template_name = "update_view.html"
     success_url = reverse_lazy("contract_list")
@@ -375,16 +366,36 @@ class ContractDeleteView(LoginRequiredMixin, DeleteView):
         return get_object_or_404(Contract, id=id_)
 
 
-def uploadFile(request, id):
-    if request.method == "POST":
-        form = UploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("contract_list")
-            # return reverse_lazy("contract_detail_view", kwargs={'id': id})
-    else:
-        form = UploadForm()
-    return render(request, "upload_file.html", {'form':form})
+class UploadView(CreateView):
+    model = ContractFile
+    form_class = UploadForm
+    template_name = "upload_file.html"
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract.id})
+
+    def get_initial(self):
+        return {'contract': get_object_or_404(Contract, id=self.kwargs.get("id"))}
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.file_name = f'{str(self.object.pdf).replace("pdfs/", "")}'
+        form.save()
+        return super().form_valid(form)
+
+
+#
+# def uploadFile(request, id):
+#     if request.method == "POST":
+#         form = UploadForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("contract_list")
+#             # return reverse_lazy("contract_detail_view", kwargs={'id': id})
+#     else:
+#         form = UploadForm()
+#     return render(request, "upload_file.html", {'form': form})
+
 
 # ==================================================== VILLA VIEWS =====================================================
 
@@ -775,17 +786,53 @@ class ContractOtherDetailView(LoginRequiredMixin, DetailView):
         return get_object_or_404(ContractOther, id=id_)
 
 
+# ==================================== PAYMENT VIEWS  ==================================================================
+
+class PaymentCreateView(LoginRequiredMixin, CreateView):
+    form_class = PaymentForm
+    template_name = "contract/contract_prod_create_view.html"
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+    def get_initial(self):
+        return {'contract': get_object_or_404(Contract, id=self.kwargs.get("id"))}
+
+
+class PaymentUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = PaymentForm
+    template_name = "update_view.html"
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("pk")
+        return get_object_or_404(Payment, pk=id_)
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+
+class PaymentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Payment
+    template_name = "delete_view.html"
+
+    def get_object(self, **kwargs):
+        id_ = self.kwargs.get("pk")
+        return get_object_or_404(Payment, pk=id_)
+
+    def get_success_url(self):
+        return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+
 # ==================================== CREATE DOCUMENT =================================================================
 
-class CreateContractView(View):
+class CreateContractView(LoginRequiredMixin, View):
     def get(self, request, id):
         contract_to_excel(id)
         return render(request, "detail_view_xls.html", context={"info": "Utworzono plik z umową!"})
 
 
 def upload(request):
-    print(MEDIA_ROOT)
-    print("elo")
+    # print(MEDIA_ROOT)
     if request.method == "POST":
         uploading_file = request.FILES["document"]
         fs = FileSystemStorage()
@@ -882,6 +929,22 @@ def downloadFile(request, id):
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = Contract.objects.get(id=id).name.replace("/", "_")
     filepath = base_dir + "/media/" + filename + ".xlsx"
+    thefile = filepath
+    filename = os.path.basename(filepath)
+    chunk_size = 8192
+    response = StreamingHttpResponse(FileWrapper(open(thefile, 'rb'), chunk_size),
+                                     content_type=mimetypes.guess_type(thefile)[0])
+    response['Content-Length'] = os.path.getsize(thefile)
+    response['Content-Disposition'] = "Attachment;filename=%s" % filename
+    return response
+
+
+@login_required
+def downloadPdf(request, id):
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = ContractFile.objects.get(id=id).pdf
+    # print(filename)
+    filepath = base_dir + "/media/" + str(filename)
     thefile = filepath
     filename = os.path.basename(filepath)
     chunk_size = 8192

@@ -41,11 +41,15 @@
             {% endfor %}</p>
     </div>
     <div class="col-2 bg-white border-left">
-        Polityka rezygnacji: <br>
+        <p>Polityka rezygnacji: </p>
         {{ object.cancellation_policy|linebreaks }}
     </div>
-    <div class="col-4 bg-white border-left">
-        Polityka płatności: <br>
+    <div class="col-2 bg-white border-left">
+        <p>Polityka płatności: </p>
+        {{ object.payment_policy|linebreaks }}
+    </div>
+    <div class="col-auto bg-white border-left">
+        <p>Wpłaty: </p>
         {{ object.payment_policy|linebreaks }}
     </div>
 </div>
@@ -56,8 +60,17 @@
         {% endfor %}
         </p>
     </div>
+    <div class="mt-4">
+        <p>Pliki:
+        {% for file in files %}
+            <a href="{% url 'download' id=file.id %}">{{ file }}</a>
+        {% endfor %}
+        </p>
+    </div>
 <div class="container-fluid">
-    <button type="submit" class="btn btn-primary" value='' onclick="location.href='{% url 'downloadfile' id=object.id %}'" name='mybtn2'>Umowa - Excel</button>
+{#    <button type="submit" class="btn btn-primary" value='' onclick="location.href='#}
+{#            {% url 'downloadfile' id=object.id%}'" name='mybtn2'>Umowa - Excel#}
+{#    </button>#}
 {# <button type="submit" value='docs/test.xlsx' onclick="location.href='{% url 'downloadfile' id=object.id %}'" name='mybtn2'>Download Excel file</button>#}
 {#<a href="{%url 'create_contract' id=object.id %}" target="_blank" onclick="window.open({%url 'downloadfile' id=object.id %})";>Click Here</a>#}
     <div class="row mt-4">
@@ -90,6 +103,21 @@
            class="btn btn-info active col mr-1"
            role="button"
            aria-pressed="true">Dodaj inną usługę
+        </a>
+        <a href="{% url 'payment_create' id=object.id %}"
+           class="btn btn-info active col mr-1"
+           role="button"
+           aria-pressed="true">Dodaj wpłatę
+        </a>
+        <a href="{% url 'uploadfile' id=object.id%}"
+           class="btn btn-info active col mr-1"
+           role="button"
+           aria-pressed="true">Dodaj plik
+        </a>
+        <a href="{% url 'downloadfile' id=object.id%}"
+           class="btn btn-secondary active col mr-1"
+           role="button"
+           aria-pressed="true">Drukuj umowę
         </a>
     </div>
 </div>
@@ -132,6 +160,12 @@
                     type="button" role="tab" aria-controls="others" aria-selected="false">Inne
                 </button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button
+                    class="nav-link" id="tab-payments" data-bs-toggle="tab" data-bs-target="#payments"
+                    type="button" role="tab" aria-controls="payments" aria-selected="false">Wpłaty
+                </button>
+            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="rooms" role="tabpanel" aria-labelledby="rooms-tab">
@@ -152,7 +186,9 @@
             <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">
                 {% include "contract/others_tab.html" %}
             </div>
-            <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="contact-tab">dane inne</div>
+            <div class="tab-pane fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+                {% include "contract/payments_tab.html" %}
+            </div>
         </div>
     </div>
 </div>
