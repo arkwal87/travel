@@ -1,0 +1,47 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+
+{#{% if birthday_list.0|length != 0 or birthday_list.1|length != 0 or birthday_list.2|length != 0 %}#}
+{#    <script> alert('Oho! Szykują się urodzinki! :)');</script>#}
+{#{% endif %}#}
+
+<div class="row">
+    <div class="col-4 bg-white">
+        <p>Nachodzące urodziny:</p>
+
+        {% if birthday_list.0|length != 0 %}
+            <p>Dzisiaj urodziny obchodzi:<br>
+            {% for client in birthday_list.0 %}
+                <a href="/reservation/klienci/{{ client.id }}">{{ client }}<br></a>
+            {% endfor %}</p>
+        {% endif %}
+
+        {% if birthday_list.1|length != 0%}
+            <p>W ciągu najbliższego tygodnia urodziny obchodzą:<br>
+            {% for client in birthday_list.1 %}
+                <a href="/reservation/klienci/{{ client.id }}">{{ client }}<br></a>
+            {% endfor %}</p>
+        {% endif %}
+
+        {% if birthday_list.2|length != 0%}
+            <p>W ciągu najbliższych 3 tygodni urodziny obchodzą:<br>
+            {% for client in birthday_list.2 %}
+                <a href="/reservation/klienci/{{ client.id }}">{{ client }}<br></a>
+            {% endfor %}</p>
+        {% endif %}
+
+    </div>
+    <div class="col-4 bg-white border-left">
+        <p>Zaległe i nadchodzące płatności:</p>
+        {% for contract in contract_list %}
+            {% if contract.payment_check == False %}
+                <a href="{% url 'contract_detail_view' id=contract.id %}">{{ contract.id }}</a>
+                - {{ contract.payment_deadline|date:"Y-m-d" }}
+            {% endif %}
+            <br>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

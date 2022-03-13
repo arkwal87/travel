@@ -9,6 +9,7 @@
         <p class="mb-0">Data zawarcia:</p>
         <p class="mb-0">Data rozpoczęcia:</p>
         <p class="mb-0">Data zakończenia:</p>
+        <p class="mb-0">Termin płatności:</p>
         <p class="mb-0">Zamawiający:</p>
     </div>
     <div class="col-auto bg-white">
@@ -29,6 +30,7 @@
                 {{ object.get_dates.1|date:"Y-m-d" }}
             {% endif %}
         &nbsp;</p>
+        <p class="mb-0">{{ object.payment_deadline|date:"Y-m-d" }}&nbsp;</p>
         <p class="mb-0"><a href="{% url 'client_details' id=object.owner.id %}">{{ object.owner }}</a></p>
     </div>
     <div class="col-2 bg-white border-left">
@@ -49,8 +51,11 @@
         {{ object.payment_policy|linebreaks }}
     </div>
     <div class="col-auto bg-white border-left">
-        <p>Wpłaty: </p>
-        {{ object.payment_policy|linebreaks }}
+        <p>Pozostało do zapłaty: </p>
+            {% for k, v in object.to_pay.items %}
+                {{ v }} {{ k }}
+            {% endfor %}
+{#        <p>{{ object.payment_check }}</p>#}
     </div>
 </div>
     <div class="mt-4">

@@ -196,6 +196,7 @@ class UploadForm(forms.ModelForm):
             'contract': forms.HiddenInput,
         }
 
+
 class PaymentForm(forms.ModelForm):
     class Meta:
         model = Payment

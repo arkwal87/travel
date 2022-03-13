@@ -33,7 +33,7 @@ from django.core.files.storage import FileSystemStorage
 # ================================== CLIENTS VIEWS =====================================================================
 
 class MyTemplateView(TemplateView):
-    template_name = "index.html"
+    template_name = "home.html"
 
     def get_birthday_3(self):
         check_date = date.today()
@@ -48,10 +48,17 @@ class MyTemplateView(TemplateView):
                 birthday_list[2].append(client)
         return birthday_list
 
+    def get_unpaid_contracts(self):
+        today = date.today()
+        contract_list = Contract.objects.filter(payment_deadline__gt=today-timedelta(days=31))
+        return contract_list
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        birthday_list = self.get_birthday_3()
-        context.update({"birthday_list": birthday_list})
+        context.update({
+            "birthday_list": self.get_birthday_3(),
+            "contract_list": self.get_unpaid_contracts()
+        })
         return context
 
 
@@ -821,6 +828,17 @@ class PaymentDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy("contract_detail_view", kwargs={'id': self.object.contract})
+
+
+class PaymentListView(LoginRequiredMixin, ListView):
+    model = Payment
+    columns = ["Kontrakt", "Data wpłaty", "Warość", "Waluta"]
+    template_name = "payment/payment_list_view.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(PaymentListView, self).get_context_data(**kwargs)
+        context['columns'] = self.columns
+        return context
 
 
 # ==================================== CREATE DOCUMENT =================================================================

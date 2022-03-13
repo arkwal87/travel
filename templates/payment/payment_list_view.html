@@ -1,0 +1,37 @@
+{% extends "index.html" %}
+{% block content %}
+{% load static %}
+<div class="mt-4">
+{#    <a href="{% url 'payment_create' %}" class="btn btn-info active" role="button" aria-pressed="true">Dodaj nową wpłatę</a>#}
+</div>
+<div class="mt-4">
+    <table class="table table-striped" id="listTable">
+        <thead>
+            <tr>
+                {% for column in columns %}
+                    <th scope="col">{{ column }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <td>
+                    <a href="/reservation/umowy/{{ object.contract.id }}">{{ object.contract.id }}</a>
+                </td>
+                <td>
+                    {{ object.payment_date|date:"Y-m-d" }}
+                </td>
+                <td>
+                    {{ object.value }}
+                </td>
+                <td>
+                    {{ object.currency }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
