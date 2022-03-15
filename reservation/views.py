@@ -7,7 +7,7 @@ import mimetypes
 from django.core.management.color import no_style
 from django.db import connection
 
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
@@ -17,7 +17,6 @@ from django.views.generic import CreateView, DetailView, View, DeleteView, Updat
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from InStyleTravel.settings import MEDIA_ROOT
 from reservation.excel_creator import contract_to_excel
 from reservation.models import Client, Hotel, Room, Country, Continent, Region, Counterparty, Contract, MealPlan, \
     Reference, Currency, ContractRoom, Villa, ContractVilla, Airline, ContractTrain, Train, ContractInsurance, \
@@ -39,7 +38,8 @@ class MyTemplateView(TemplateView):
         check_date = date.today()
         birthday_list = [[], [], []]
         for client in Client.objects.all():
-            birthday_date = client.date_of_birth.replace(year=check_date.year)
+            if client.date_of_birth is not None:
+                birthday_date = client.date_of_birth.replace(year=check_date.year)
             if birthday_date == check_date:
                 birthday_list[0].append(client)
             elif check_date < birthday_date < (check_date + timedelta(days=8)):
@@ -50,7 +50,7 @@ class MyTemplateView(TemplateView):
 
     def get_unpaid_contracts(self):
         today = date.today()
-        contract_list = Contract.objects.filter(payment_deadline__gt=today-timedelta(days=31))
+        contract_list = Contract.objects.filter(payment_deadline__gt=today-timedelta(days=14))
         return contract_list
 
     def get_context_data(self, **kwargs):
@@ -832,7 +832,7 @@ class PaymentDeleteView(LoginRequiredMixin, DeleteView):
 
 class PaymentListView(LoginRequiredMixin, ListView):
     model = Payment
-    columns = ["Kontrakt", "Data wpłaty", "Warość", "Waluta"]
+    columns = ["Kontrakt", "Data wpłaty", "Wartość", "Waluta"]
     template_name = "payment/payment_list_view.html"
 
     def get_context_data(self, **kwargs):

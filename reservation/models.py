@@ -83,13 +83,13 @@ class BankAccount(models.Model):
 class Client(models.Model):
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
-    date_of_birth = models.DateField()
-    phone_number = models.CharField(max_length=9, null=True)
-    email = models.EmailField(null=True)
-    city = models.CharField(max_length=32, null=True)
-    postcode = models.CharField(max_length=6, null=True)
-    address = models.TextField(null=True)
-    reference = models.ForeignKey(Reference, on_delete=models.SET_NULL, null=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    phone_number = models.CharField(max_length=9, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    city = models.CharField(max_length=32, null=True, blank=True)
+    postcode = models.CharField(max_length=6, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    reference = models.ForeignKey(Reference, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -280,8 +280,6 @@ class Contract(models.Model):
             ).aggregate(Sum("value"))['value__sum']
             if cur_value is not None:
                 pay_results[currency.hash] = cur_value
-        # if 'EUR' in pay_results:
-        #     print(pay_results['EUR'])
         return pay_results
 
     def to_pay(self):
@@ -317,8 +315,8 @@ class ContractRoom(models.Model):
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
     room_number = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     # offer - dla klienta
-    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
-    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    price_net = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_room_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_room_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
@@ -330,8 +328,8 @@ class ContractVilla(models.Model):
     date_from = models.DateField()
     date_to = models.DateField()
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
-    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
-    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    price_net = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_villa_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_villa_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
@@ -344,8 +342,8 @@ class ContractTrain(models.Model):
     date_from = models.DateField()
     date_to = models.DateField()
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
-    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
-    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    price_net = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_train_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_train_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
@@ -358,8 +356,8 @@ class ContractOther(models.Model):
     date_from = models.DateField()
     date_to = models.DateField()
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
-    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
-    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    price_net = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_product_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_product_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
@@ -368,13 +366,13 @@ class ContractOther(models.Model):
 class ContractInsurance(models.Model):
     type = models.IntegerField(choices=[(1, "Podróżne"), (2, "Kosztów rezygnacji")], default=1)
     insurance_no = models.CharField(max_length=256)
-    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
-    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    price_net = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_insurance_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_insurance_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
-    extra_notes = models.TextField(null=True)
+    extra_notes = models.TextField(null=True, blank=True)
 
 
 class ContractTicket(models.Model):
@@ -384,8 +382,8 @@ class ContractTicket(models.Model):
     # TUTAJ ZMIEN NULL I BLANK! MUSI BYC PODANE!
     date_departure = models.DateField(null=True, blank=True)
     date_arrival = models.DateField(null=True, blank=True)
-    price_offer = models.DecimalField(max_digits=10, decimal_places=2)
-    price_net = models.DecimalField(max_digits=10, decimal_places=2)
+    price_offer = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    price_net = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     offer_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="offer_ticket_currency")
     net_currency = models.ForeignKey(Currency, on_delete=models.CASCADE, related_name="net_ticket_currency")
     counterparty = models.ForeignKey(Counterparty, on_delete=models.CASCADE)
@@ -396,6 +394,6 @@ class ContractTicket(models.Model):
 
 class Payment(models.Model):
     contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, null=True)
-    value = models.DecimalField(max_digits=10, decimal_places=2)
+    value = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     payment_date = models.DateField()

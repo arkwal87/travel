@@ -60,7 +60,8 @@ LABELS = {
     "quantity": "Ilość",
     "payment_date": "Data wpłaty",
     "value": "Wartość",
-    "currency": "Waluta"
+    "currency": "Waluta",
+    "ticket_details": "Szczegóły biletu"
 }
 
 
@@ -128,6 +129,12 @@ class ContractRoomCreateForm(forms.ModelForm):
             'date_to': DateInput(),
         }
 
+    def clean_date_to(self):
+        date_to = self.cleaned_data.get('date_to')
+        date_from = self.cleaned_data.get('date_from')
+        if date_to < date_from:
+            raise forms.ValidationError('Sprawdź poprawność dat')
+
 
 class ContractVillaCreateForm(forms.ModelForm):
     class Meta:
@@ -139,6 +146,12 @@ class ContractVillaCreateForm(forms.ModelForm):
             'date_from': DateInput(),
             'date_to': DateInput(),
         }
+
+    def clean_date_to(self):
+        date_to = self.cleaned_data.get('date_to')
+        date_from = self.cleaned_data.get('date_from')
+        if date_to < date_from:
+            raise forms.ValidationError('Sprawdź poprawność dat')
 
 
 class ContractTrainCreateForm(forms.ModelForm):
@@ -152,6 +165,12 @@ class ContractTrainCreateForm(forms.ModelForm):
             'date_to': DateInput(),
         }
 
+    def clean_date_to(self):
+        date_to = self.cleaned_data.get('date_to')
+        date_from = self.cleaned_data.get('date_from')
+        if date_to < date_from:
+            raise forms.ValidationError('Sprawdź poprawność dat')
+
 
 class ContractInsuranceCreateForm(forms.ModelForm):
     class Meta:
@@ -159,6 +178,12 @@ class ContractInsuranceCreateForm(forms.ModelForm):
         fields = "__all__"
         labels = LABELS
         widgets = {'contract': forms.HiddenInput}
+
+    def clean_date_to(self):
+        date_to = self.cleaned_data.get('date_to')
+        date_from = self.cleaned_data.get('date_from')
+        if date_to < date_from:
+            raise forms.ValidationError('Sprawdź poprawność dat')
 
 
 class ContractTicketCreateForm(forms.ModelForm):
@@ -172,6 +197,12 @@ class ContractTicketCreateForm(forms.ModelForm):
             'date_arrival': DateInput()
         }
 
+    def clean_date_arrival(self):
+        date_to = self.cleaned_data.get('date_departure')
+        date_from = self.cleaned_data.get('date_arrival')
+        if date_to < date_from:
+            raise forms.ValidationError('Sprawdź poprawność dat')
+
 
 class ContractOtherCreateForm(forms.ModelForm):
     class Meta:
@@ -179,6 +210,12 @@ class ContractOtherCreateForm(forms.ModelForm):
         fields = "__all__"
         labels = LABELS
         widgets = {'contract': forms.HiddenInput}
+
+    def clean_date_to(self):
+        date_to = self.cleaned_data.get('date_to')
+        date_from = self.cleaned_data.get('date_from')
+        if date_to < date_from:
+            raise forms.ValidationError('Sprawdź poprawność dat')
 
 
 class VillaCreateForm(forms.ModelForm):
